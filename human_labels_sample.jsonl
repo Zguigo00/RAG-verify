@@ -1,0 +1,6 @@
+{"question_id":"q001","system_name":"team-A","labeler":"alice","correct":1,"faithful":1,"complete":1,"citation_ok":1,"abstain_ok":null,"note":""}
+{"question_id":"q003","system_name":"team-A","labeler":"alice","correct":1,"faithful":1,"complete":1,"citation_ok":null,"abstain_ok":1,"note":"正确拒答"}
+{"question_id":"q008","system_name":"team-A","labeler":"alice","correct":0,"faithful":0,"complete":1,"citation_ok":0,"abstain_ok":null,"note":"引了 2024 版 chunk 却说成 2025 年标准，版本混淆 + 引用错误"}
+{"question_id":"q008","system_name":"team-A","labeler":"bob","correct":0,"faithful":0,"complete":1,"citation_ok":0,"abstain_ok":null,"note":"同意 alice；建议归因为 Citation Error 而非 Generation Error"}
+{"question_id":"q003","system_name":"team-B","labeler":"alice","correct":0,"faithful":0,"complete":1,"citation_ok":null,"abstain_ok":0,"note":"知识库无答案却编造东京办公室数量，典型幻觉"}
+{"question_id":"q001","system_name":"team-B","labeler":"bob","correct":1,"faithful":1,"complete":0,"citation_ok":null,"abstain_ok":null,"note":"答案对但没说清是『一线城市』"}
