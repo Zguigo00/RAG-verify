@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ragtest.local/schemas/dataset.schema.json",
+  "title": "RAG 评测题库条目",
+  "description": "dataset.jsonl 每行一条。由主办方统一出题并持有，发给参赛方时应剥离 ground_truth_* 字段（防泄题）。",
+  "type": "object",
+  "required": [
+    "question_id",
+    "question",
+    "category",
+    "ground_truth_answer",
+    "ground_truth_chunks",
+    "ground_truth_facts",
+    "expected_abstain"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "question_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_\\-]{1,64}$",
+      "description": "全局唯一题号，例如 q001。跨所有题型不重复。"
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1,
+      "description": "用户问题原文。"
+    },
+    "category": {
+      "description": "题型。分类别统计用，见文档 §44「不要只测平均值」。",
+      "enum": [
+        "simple",
+        "multi_hop",
+        "long",
+        "temporal",
+        "ambiguous",
+        "no_answer",
+        "multi_doc",
+        "hard"
+      ]
+    },
+    "difficulty": {
+      "enum": ["easy", "medium", "hard"],
+      "default": "medium"
+    },
+    "ground_truth_answer": {
+      "type": "string",
+      "description": "标准答案。no_answer 题填期望的拒答话术（或空串）。"
+    },
+    "ground_truth_chunks": {
+      "type": "array",
+      "description": "正确答案所在的 chunk 列表，供 Recall/Precision/MRR/NDCG 计算。no_answer 题必须为空数组。",
+      "items": {
+        "type": "object",
+        "required": ["chunk_id", "doc_id", "relevance"],
+        "additionalProperties": false,
+        "properties": {
+          "chunk_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "与 run_log.retrieved_chunks[].chunk_id 用同一套编号体系。"
+          },
+          "doc_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "所属文档，例如 employee_travel_policy.pdf。"
+          },
+          "relevance": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3,
+            "description": "分级相关度：0=无关 1=部分相关 2=相关 3=非常相关。NDCG 用。"
+          }
+        }
+      }
+    },
+    "ground_truth_facts": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "把标准答案拆成的原子事实，供 Context Recall / Completeness 逐条核对。"
+    },
+    "expected_abstain": {
+      "type": "boolean",
+      "description": "true = 知识库无答案，系统应当拒答。用于 Abstention Accuracy（文档 §47）。"
+    },
+    "notes": {
+      "type": "string",
+      "description": "出题备注（内部用，不发给参赛方）。"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "expected_abstain": { "const": true } },
+        "required": ["expected_abstain"]
+      },
+      "then": {
+        "properties": { "ground_truth_chunks": { "maxItems": 0 } },
+        "description": "无答案题不应有 ground_truth_chunks。"
+      }
+    },
+    {
+      "if": {
+        "properties": { "category": { "const": "no_answer" } },
+        "required": ["category"]
+      },
+      "then": {
+        "properties": { "expected_abstain": { "const": true } },
+        "description": "category=no_answer 时 expected_abstain 必须为 true。"
+      }
+    }
+  ]
+}

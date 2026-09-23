@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ragtest.local/schemas/human_labels.schema.json",
+  "title": "人工复核标注",
+  "description": "human_labels.jsonl 每行一条。用于校准 LLM-as-a-Judge（算 Cohen's κ，文档 §50），并对争议样本给出最终判定。",
+  "type": "object",
+  "required": ["question_id", "system_name", "labeler", "correct", "faithful", "complete"],
+  "additionalProperties": false,
+  "properties": {
+    "question_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_\\-]{1,64}$"
+    },
+    "system_name": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_\\-]{1,64}$"
+    },
+    "labeler": {
+      "type": "string",
+      "minLength": 1,
+      "description": "标注人 ID。多人标注同一样本用于算标注员间一致性。"
+    },
+    "correct": {
+      "type": "integer",
+      "enum": [0, 1],
+      "description": "Answer Correctness 人工判定：1=正确 0=错误。"
+    },
+    "faithful": {
+      "type": "integer",
+      "enum": [0, 1],
+      "description": "Faithfulness 人工判定：1=答案内容均可由 context 支撑 0=存在 unsupported claim。"
+    },
+    "complete": {
+      "type": "integer",
+      "enum": [0, 1],
+      "description": "Completeness 人工判定：1=问的都答全了 0=漏答。"
+    },
+    "citation_ok": {
+      "type": ["integer", "null"],
+      "enum": [0, 1, null],
+      "default": null,
+      "description": "引用是否支撑论断。该系统未提供 citations 时填 null。"
+    },
+    "abstain_ok": {
+      "type": ["integer", "null"],
+      "enum": [0, 1, null],
+      "default": null,
+      "description": "仅 no_answer 题填写：1=正确拒答 0=该拒未拒/不该拒却拒。其他题型填 null。"
+    },
+    "note": {
+      "type": "string",
+      "description": "标注备注，尤其是判定有争议时写清理由。"
+    }
+  }
+}
