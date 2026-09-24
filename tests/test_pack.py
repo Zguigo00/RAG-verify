@@ -16,7 +16,7 @@ from rag_eval.pack import (
     make_public_rows,
     write_public,
 )
-from rag_eval.validate import schema_errors
+from rag_eval.validate import load_jsonl, schema_errors
 
 ROOT = Path(__file__).resolve().parent.parent
 fails = []
@@ -102,6 +102,42 @@ inner_leak = [r["question_id"] for r in raw
               and r["ground_truth_answer"].strip() in inner]
 check(not inner_leak, f"zip 内考卷无答案泄漏（{inner_leak}）")
 out_zip.unlink()
+
+# ---- 8. run_log 可选字段允许 null，但必填字段与 items 不得 null ----
+# 真实代码序列化时常输出 null（如 to_record 里的 c.get("score")），契约必须吃得下
+null_ok = [(
+    1,
+    {"system_name": "t", "question_id": "q1", "answer": "答",
+     "cost_usd": None, "trace": None, "citations": None, "context": None,
+     "query_rewritten": None, "latency_ms": None, "input_tokens": None,
+     "output_tokens": None, "abstained": None, "error": None,
+     "retrieved_chunks": [{"chunk_id": "c1", "rank": 1,
+                           "doc_id": None, "score": None, "text": None}]},
+)]
+check(not schema_errors("run_log", null_ok), "全 null 可选字段的答题卡通过校验")
+
+null_bad = [
+    (1, {"system_name": None, "question_id": "q", "answer": "x"}),
+    (2, {"system_name": "t", "question_id": "q", "answer": None}),
+    (3, {"system_name": "t", "question_id": "q", "answer": "x", "retrieved_chunks": [None]}),
+    (4, {"system_name": "t", "question_id": "q", "answer": "x", "retrieved_chunks": [{"rank": 1}]}),
+    (5, {"system_name": "t", "question_id": "q", "answer": "x", "retrieved_chunks": [{"chunk_id": "c", "rank": 0}]}),
+    (6, {"system_name": "t", "question_id": "q", "answer": "x", "cost_usd": -1}),
+]
+for item in null_bad:
+    errs = schema_errors("run_log", [item])
+    check(bool(errs), f"负向第{item[0]}条被拦: {(errs[0].split(': ', 1)[-1] if errs else '未拦')[:44]}")
+
+# ---- 9. 现成答题卡（含 null 可选字段）应整体通过 ----
+sample_logs = list((ROOT / "logs").glob("*.jsonl"))
+all_pass = True
+for p in sample_logs:
+    items, _ = load_jsonl(p)
+    errs = schema_errors("run_log", items)
+    if errs:
+        all_pass = False
+        print(f"       {p.name}: {errs[:2]}")
+check(all_pass, f"{len(sample_logs)} 份现成答题卡样例全部通过校验")
 
 print()
 print("ALL_PASS" if not fails else f"HAS_FAILURE: {fails}")

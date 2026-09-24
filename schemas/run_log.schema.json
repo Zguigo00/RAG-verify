@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ragtest.local/schemas/run_log.schema.json",
   "title": "参赛方 RAG 提交结果（答题卡）",
-  "description": "run_log.jsonl 每行一条，对应一道题的完整作答过程。必填仅 system_name / question_id / answer，其余字段缺什么就不评什么指标（显示 N/A，不计 0 分）。",
+  "description": "run_log.jsonl 每行一条，对应一道题的完整作答过程。必填仅 system_name / question_id / answer，其余字段缺什么就不评什么指标（显示 N/A，不计 0 分）。可选字段允许显式填 null（真实代码序列化常输出 null），与缺字段等价。",
   "type": "object",
   "required": ["system_name", "question_id", "answer"],
   "additionalProperties": false,
@@ -22,16 +22,16 @@
       "description": "最终答案。超时/异常时填空串并把 error 置为原因。"
     },
     "abstained": {
-      "type": "boolean",
+      "type": ["boolean", "null"],
       "default": false,
       "description": "是否拒答。no_answer 题上为 true 才算 Abstention 成功。"
     },
     "query_rewritten": {
-      "type": "string",
+      "type": ["string", "null"],
       "description": "Query Rewrite / Expansion 后实际送入检索的 query，用于 debug 检索失败。"
     },
     "retrieved_chunks": {
-      "type": "array",
+      "type": ["array", "null"],
       "description": "检索返回的 chunk 列表，按最终排序（重排后）填写。给了才能算 Recall/MRR/NDCG/Precision。",
       "items": {
         "type": "object",
@@ -43,29 +43,31 @@
             "minLength": 1,
             "description": "必须与 dataset.ground_truth_chunks[].chunk_id 同一编号体系，否则检索指标算不出来。"
           },
-          "doc_id": { "type": "string" },
+          "doc_id": {
+            "type": ["string", "null"]
+          },
           "rank": {
             "type": "integer",
             "minimum": 1,
             "description": "1 起的最终排名，同一条记录内不可重复。"
           },
           "score": {
-            "type": "number",
+            "type": ["number", "null"],
             "description": "检索/重排分数，仅用于 debug，不参与指标计算。"
           },
           "text": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "chunk 原文，便于人工复核时对照。"
           }
         }
       }
     },
     "context": {
-      "type": "string",
+      "type": ["string", "null"],
       "description": "拼接后真正送给 LLM 的完整上下文。给了才能准确算 Faithfulness / Context Recall / Context Precision。"
     },
     "citations": {
-      "type": "array",
+      "type": ["array", "null"],
       "description": "答案中的引用声明。给了才能算 Citation 系列指标。",
       "items": {
         "type": "object",
@@ -86,21 +88,29 @@
       }
     },
     "latency_ms": {
-      "type": "number",
+      "type": ["number", "null"],
       "minimum": 0,
       "description": "端到端耗时（毫秒）。"
     },
-    "input_tokens": { "type": "integer", "minimum": 0 },
-    "output_tokens": { "type": "integer", "minimum": 0 },
+    "input_tokens": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "output_tokens": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
     "cost_usd": {
-      "type": "number",
+      "type": ["number", "null"],
       "minimum": 0,
       "description": "本题成本（美元）。不填则由主办方按统一价目表从 tokens 折算，保证可比。"
     },
     "trace": {
-      "type": "object",
+      "type": ["object", "null"],
       "description": "可选的分阶段耗时（毫秒），如 {\"embedding_ms\":45,\"search_ms\":80,\"rerank_ms\":200,\"llm_ms\":900}。用于耗时下钻。",
-      "additionalProperties": { "type": "number" }
+      "additionalProperties": {
+        "type": ["number", "null"]
+      }
     },
     "error": {
       "type": ["string", "null"],

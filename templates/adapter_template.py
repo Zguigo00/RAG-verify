@@ -85,7 +85,6 @@ def to_record(question_id: str, raw: dict) -> dict:
         "error": raw.get("error"),
     }
 
-
 # ============================================================ 主流程（不用改）
 def main() -> int:
     ap = argparse.ArgumentParser(description="导出 RAG 评测答题卡 run_log.jsonl")
