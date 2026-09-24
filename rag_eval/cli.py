@@ -67,7 +67,7 @@ def cmd_run(args: argparse.Namespace) -> int:
         run_items += items
     records = [rec for _, rec in run_items]
 
-    # 人工标注覆盖规则版正确性判定（P2 会再叠加 LLM Judge）
+    # 优先级：LLM Judge > 人工标注 > 规则版 approx_correct
     correctness: dict[tuple[str, str], bool] = {}
     if args.human_labels:
         hl_items, e = load_jsonl(Path(args.human_labels))
@@ -76,10 +76,25 @@ def cmd_run(args: argparse.Namespace) -> int:
         for _, rec in hl_items:
             if rec.get("correct") is not None:
                 correctness[(rec["question_id"], rec["system_name"])] = bool(rec["correct"])
+    if getattr(args, "judge_scores", None):
+        import json as _json
+
+        doc = _json.loads(Path(args.judge_scores).read_text(encoding="utf-8"))
+        n_judged = 0
+        for row in doc.get("per_question", []):
+            b = (row.get("binary") or {}).get("correctness")
+            if b is not None:
+                correctness[(row["question_id"], row["system_name"])] = bool(b)
+                n_judged += 1
+        print(f"[judge] 用 LLM Judge 覆盖 {n_judged} 条 correctness 判定")
 
     out = {
         "systems": results_for_all(records, gt_by_id, correctness or None),
-        "judge": "rule-based (approx_correct) + human_labels override",
+        "judge": (
+            "llm-judge (binary.correctness)"
+            if getattr(args, "judge_scores", None)
+            else "rule-based (approx_correct) + human_labels override"
+        ),
     }
     front = pareto_front(out["systems"])
     out["pareto_front"] = front
@@ -109,6 +124,124 @@ def cmd_run(args: argparse.Namespace) -> int:
     return 0
 
 
+def _load_gt(dataset: str) -> dict[str, dict]:
+    items, errs = load_jsonl(Path(dataset))
+    for m in errs:
+        print(f"[错误] {m}")
+    return {rec["question_id"]: rec for _, rec in items}
+
+
+def _load_runs(paths: list[str]) -> list[dict]:
+    out = []
+    for p in paths or []:
+        items, errs = load_jsonl(Path(p))
+        for m in errs:
+            print(f"[错误] {p}: {m}")
+        out += [rec for _, rec in items]
+    return out
+
+
+def cmd_judge(args: argparse.Namespace) -> int:
+    """LLM-as-a-Judge 打分。需要 RAG_JUDGE_BASE_URL / RAG_JUDGE_API_KEY / RAG_JUDGE_MODEL。"""
+    import json
+
+    from .judge import JudgeClient, to_binary, to_unit
+    from .judge_metrics import judge_record, summarize
+
+    gt_by_id = _load_gt(args.dataset)
+    records = _load_runs(args.run_log)
+    client = JudgeClient(
+        base_url=args.base_url, api_key=args.api_key, model=args.model, samples=args.samples
+    )
+    print(f"Judge: {client.model} @ {client.base_url}   样本数/题: {client.samples}")
+
+    rows = []
+    for i, rec in enumerate(records, 1):
+        gt = gt_by_id.get(rec.get("question_id"))
+        if gt is None:
+            continue
+        scores = judge_record(client, rec, gt, samples=args.samples)
+        rows.append(
+            {
+                "question_id": rec.get("question_id"),
+                "system_name": rec.get("system_name"),
+                "scores": scores,
+                "unit": {
+                    m: (to_unit(s["score"]) if s and s.get("score") is not None else None)
+                    for m, s in scores.items()
+                },
+                "binary": {
+                    m: (to_binary(s["score"]) if s and s.get("score") is not None else None)
+                    for m, s in scores.items()
+                },
+            }
+        )
+        done = {m: s["score"] for m, s in scores.items() if s and s.get("score") is not None}
+        print(f"[{i}/{len(records)}] {rec.get('question_id')}/{rec.get('system_name')}  {done}")
+
+    out = {
+        "judge": {"model": client.model, "base_url": client.base_url, "samples": client.samples},
+        "per_question": rows,
+        "summary": {},
+        "api_calls": client.calls,
+    }
+    by_sys: dict[str, list[dict]] = {}
+    for r in rows:
+        by_sys.setdefault(r["system_name"], []).append(r)
+    for name, rs in by_sys.items():
+        out["summary"][name] = summarize(rs)
+
+    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+    Path(args.out).write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    for name, s in out["summary"].items():
+        print(f"\n=== {name}")
+        for metric, m in s.items():
+            if m["mean_score"] is None:
+                print(f"  {metric:<18} N/A")
+            else:
+                print(
+                    f"  {metric:<18} {m['mean_score']:.2f}/5  (归一化 {m['mean_unit']:.3f})  "
+                    f"n={m['n_scored']}  不稳={m['n_unstable']}"
+                )
+    print(f"\n共调用 API {client.calls} 次   已写出 {args.out}")
+    return 0
+
+
+def cmd_calibrate(args: argparse.Namespace) -> int:
+    """Judge 校准：与人工标注算 Cohen's κ，κ<0.6 不放量（§50）。"""
+    import json
+
+    from .calibration import calibrate, to_judge_binary
+
+    judge_doc = json.loads(Path(args.judge_scores).read_text(encoding="utf-8"))
+    hl_items, errs = load_jsonl(Path(args.human_labels))
+    for m in errs:
+        print(f"[错误] {m}")
+    human = [rec for _, rec in hl_items]
+
+    report = calibrate(to_judge_binary(judge_doc["per_question"]), human)
+
+    print(f"配对样本 {report['n_paired_total']} 条   κ 均值 {report['kappa_mean']}   闸门 {report['gate']}")
+    for metric, m in report["per_metric"].items():
+        if m["n_paired"] == 0:
+            print(f"  {metric:<14} 无配对样本（跳过）")
+            continue
+        print(
+            f"  {metric:<14} n={m['n_paired']}  一致率={m['agreement_rate']:.2f}  "
+            f"κ={m['cohens_kappa']:.3f}  {'PASS' if m['pass'] else 'FAIL'}  {m['confusion']}"
+        )
+    print(f"\n结论: {report['verdict']}")
+
+    if args.out:
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out).write_text(
+            json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        print(f"已写出 {args.out}")
+    return 0 if report["pass"] else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     # Windows 控制台默认 GBK，强制 UTF-8 输出，避免中文乱码
     for stream in (sys.stdout, sys.stderr):
@@ -132,8 +265,25 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--dataset", required=True)
     r.add_argument("--run-log", action="append", required=True)
     r.add_argument("--human-labels", help="可选：人工标注，覆盖规则版正确性判定")
+    r.add_argument("--judge-scores", help="可选：judge_scores.json，优先级高于人工标注")
     r.add_argument("--out", default="results/results.json")
     r.set_defaults(func=cmd_run)
+
+    j = sub.add_parser("judge", help="LLM-as-a-Judge 打分（Faithfulness/Correctness/Context 等）")
+    j.add_argument("--dataset", required=True)
+    j.add_argument("--run-log", action="append", required=True)
+    j.add_argument("--base-url", help="OpenAI 兼容端点，默认读 RAG_JUDGE_BASE_URL")
+    j.add_argument("--api-key", help="默认读 RAG_JUDGE_API_KEY")
+    j.add_argument("--model", help="默认读 RAG_JUDGE_MODEL")
+    j.add_argument("--samples", type=int, default=3, help="每条判几次取中位（默认 3）")
+    j.add_argument("--out", default="results/judge_scores.json")
+    j.set_defaults(func=cmd_judge)
+
+    c = sub.add_parser("calibrate", help="Judge 校准：与人工标注算 Cohen's κ，κ<0.6 不放量")
+    c.add_argument("--judge-scores", required=True)
+    c.add_argument("--human-labels", required=True)
+    c.add_argument("--out", default="results/calibration.json")
+    c.set_defaults(func=cmd_calibrate)
 
     args = parser.parse_args(argv)
     return args.func(args)
