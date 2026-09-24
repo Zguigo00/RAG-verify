@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SCHEMA_DIR = ROOT / "schemas"
 SCHEMA_FILES = {
     "dataset": SCHEMA_DIR / "dataset.schema.json",
+    "dataset_public": SCHEMA_DIR / "dataset_public.schema.json",
     "run_log": SCHEMA_DIR / "run_log.schema.json",
     "human_labels": SCHEMA_DIR / "human_labels.schema.json",
 }
@@ -76,9 +77,17 @@ def _load_validator(kind: str):
 
 
 def schema_errors(kind: str, items: list[tuple[int, dict]]) -> list[str]:
-    """逐条跑 JSON Schema，错误信息带行号 + 字段路径。"""
+    """逐条跑 JSON Schema，错误信息带行号 + 字段路径。
+
+    kind="dataset" 时按内容自动选 schema：
+      含 ground_truth_answer -> dataset.schema.json（完整版，主办方持有）
+      不含                  -> dataset_public.schema.json（公开版，发给参赛方）
+    """
     if not items:
         return []
+    if kind == "dataset":
+        has_gt = any("ground_truth_answer" in rec for _, rec in items)
+        kind = "dataset" if has_gt else "dataset_public"
     validator = _load_validator(kind)
     out: list[str] = []
     for line_no, rec in items:
@@ -301,8 +310,13 @@ def validate_files(
         errors += schema_errors("dataset", ds_items)
         e2, w2 = check_dataset(ds_items)
         errors += e2
-        warnings += w2
+        # 公开版没有 expected_abstain / category，跨行一致性检查只对完整版有意义
+        if any("ground_truth_answer" in rec for _, rec in ds_items):
+            warnings += w2
         stats["dataset_records"] = len(ds_items)
+        stats["dataset_kind"] = (
+            "full" if any("ground_truth_answer" in rec for _, rec in ds_items) else "public"
+        )
 
     run_items: list[tuple[int, dict]] = []
     for p in run_logs or []:

@@ -25,7 +25,10 @@ def cmd_validate(args: argparse.Namespace) -> int:
     errors, warnings = result["errors"], result["warnings"]
 
     for name, n in result["stats"].items():
-        print(f"[读取] {name}: {n} 条")
+        if name == "dataset_kind":
+            print(f"[读取] dataset 版本: {n}（public=发给参赛方的公开版, full=含标准答案的完整版）")
+        else:
+            print(f"[读取] {name}: {n} 条")
 
     for w in warnings:
         print(f"[警告] {w}")
@@ -242,6 +245,20 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
     return 0 if report["pass"] else 1
 
 
+def cmd_make_public(args: argparse.Namespace) -> int:
+    """发卷：剥离标准答案与一切泄题字段，产出公开版考卷。"""
+    from .pack import write_public
+
+    return write_public(Path(args.dataset), Path(args.out))
+
+
+def cmd_pack(args: argparse.Namespace) -> int:
+    """打包参赛方工具箱：公开考卷 + 官方 chunk 库 + 模板 + 校验器。"""
+    from .pack import build_kit
+
+    return build_kit(Path(args.dataset), Path(args.out))
+
+
 def main(argv: list[str] | None = None) -> int:
     # Windows 控制台默认 GBK，强制 UTF-8 输出，避免中文乱码
     for stream in (sys.stdout, sys.stderr):
@@ -284,6 +301,16 @@ def main(argv: list[str] | None = None) -> int:
     c.add_argument("--human-labels", required=True)
     c.add_argument("--out", default="results/calibration.json")
     c.set_defaults(func=cmd_calibrate)
+
+    mp = sub.add_parser("make-public", help="发卷：剥离标准答案与泄题字段，产出公开版考卷")
+    mp.add_argument("--dataset", required=True)
+    mp.add_argument("--out", default="dataset/dataset_public.jsonl")
+    mp.set_defaults(func=cmd_make_public)
+
+    pk = sub.add_parser("pack", help="打包参赛方工具箱 zip（公开考卷+chunk 库+模板+校验器）")
+    pk.add_argument("--dataset", required=True)
+    pk.add_argument("--out", default="dist/rag-bench-kit.zip")
+    pk.set_defaults(func=cmd_pack)
 
     args = parser.parse_args(argv)
     return args.func(args)
