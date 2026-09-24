@@ -1,0 +1,914 @@
+{
+  "flash_sale__000": {
+    "doc_id": "flash_sale",
+    "domain": "ecommerce",
+    "title": "(文档头)",
+    "file": "corpus/ecommerce/flash_sale.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "flash_sale__001": {
+    "doc_id": "flash_sale",
+    "domain": "ecommerce",
+    "title": "活动形式",
+    "file": "corpus/ecommerce/flash_sale.md",
+    "line_start": 5,
+    "line_end": 10
+  },
+  "flash_sale__002": {
+    "doc_id": "flash_sale",
+    "domain": "ecommerce",
+    "title": "限购与下单",
+    "file": "corpus/ecommerce/flash_sale.md",
+    "line_start": 11,
+    "line_end": 17
+  },
+  "flash_sale__003": {
+    "doc_id": "flash_sale",
+    "domain": "ecommerce",
+    "title": "防作弊规则",
+    "file": "corpus/ecommerce/flash_sale.md",
+    "line_start": 18,
+    "line_end": 24
+  },
+  "flash_sale__004": {
+    "doc_id": "flash_sale",
+    "domain": "ecommerce",
+    "title": "发货与售后",
+    "file": "corpus/ecommerce/flash_sale.md",
+    "line_start": 25,
+    "line_end": 30
+  },
+  "invoice_rules__000": {
+    "doc_id": "invoice_rules",
+    "domain": "ecommerce",
+    "title": "(文档头)",
+    "file": "corpus/ecommerce/invoice_rules.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "invoice_rules__001": {
+    "doc_id": "invoice_rules",
+    "domain": "ecommerce",
+    "title": "开票范围与类型",
+    "file": "corpus/ecommerce/invoice_rules.md",
+    "line_start": 5,
+    "line_end": 11
+  },
+  "invoice_rules__002": {
+    "doc_id": "invoice_rules",
+    "domain": "ecommerce",
+    "title": "开票时限",
+    "file": "corpus/ecommerce/invoice_rules.md",
+    "line_start": 12,
+    "line_end": 18
+  },
+  "invoice_rules__003": {
+    "doc_id": "invoice_rules",
+    "domain": "ecommerce",
+    "title": "发票抬头与税号",
+    "file": "corpus/ecommerce/invoice_rules.md",
+    "line_start": 19,
+    "line_end": 25
+  },
+  "invoice_rules__004": {
+    "doc_id": "invoice_rules",
+    "domain": "ecommerce",
+    "title": "专用发票要求",
+    "file": "corpus/ecommerce/invoice_rules.md",
+    "line_start": 26,
+    "line_end": 31
+  },
+  "membership_2024__000": {
+    "doc_id": "membership_2024",
+    "domain": "ecommerce",
+    "title": "(文档头)",
+    "file": "corpus/ecommerce/membership_2024.md",
+    "line_start": 1,
+    "line_end": 5
+  },
+  "membership_2024__001": {
+    "doc_id": "membership_2024",
+    "domain": "ecommerce",
+    "title": "等级与门槛",
+    "file": "corpus/ecommerce/membership_2024.md",
+    "line_start": 6,
+    "line_end": 12
+  },
+  "membership_2024__002": {
+    "doc_id": "membership_2024",
+    "domain": "ecommerce",
+    "title": "折扣与免邮",
+    "file": "corpus/ecommerce/membership_2024.md",
+    "line_start": 13,
+    "line_end": 19
+  },
+  "membership_2024__003": {
+    "doc_id": "membership_2024",
+    "domain": "ecommerce",
+    "title": "积分",
+    "file": "corpus/ecommerce/membership_2024.md",
+    "line_start": 20,
+    "line_end": 26
+  },
+  "membership_2024__004": {
+    "doc_id": "membership_2024",
+    "domain": "ecommerce",
+    "title": "专属服务",
+    "file": "corpus/ecommerce/membership_2024.md",
+    "line_start": 27,
+    "line_end": 31
+  },
+  "membership_2024__005": {
+    "doc_id": "membership_2024",
+    "domain": "ecommerce",
+    "title": "降级与冻结",
+    "file": "corpus/ecommerce/membership_2024.md",
+    "line_start": 32,
+    "line_end": 35
+  },
+  "membership_2025__000": {
+    "doc_id": "membership_2025",
+    "domain": "ecommerce",
+    "title": "(文档头)",
+    "file": "corpus/ecommerce/membership_2025.md",
+    "line_start": 1,
+    "line_end": 5
+  },
+  "membership_2025__001": {
+    "doc_id": "membership_2025",
+    "domain": "ecommerce",
+    "title": "等级与门槛",
+    "file": "corpus/ecommerce/membership_2025.md",
+    "line_start": 6,
+    "line_end": 12
+  },
+  "membership_2025__002": {
+    "doc_id": "membership_2025",
+    "domain": "ecommerce",
+    "title": "折扣与免邮",
+    "file": "corpus/ecommerce/membership_2025.md",
+    "line_start": 13,
+    "line_end": 20
+  },
+  "membership_2025__003": {
+    "doc_id": "membership_2025",
+    "domain": "ecommerce",
+    "title": "积分",
+    "file": "corpus/ecommerce/membership_2025.md",
+    "line_start": 21,
+    "line_end": 27
+  },
+  "membership_2025__004": {
+    "doc_id": "membership_2025",
+    "domain": "ecommerce",
+    "title": "专属服务",
+    "file": "corpus/ecommerce/membership_2025.md",
+    "line_start": 28,
+    "line_end": 33
+  },
+  "membership_2025__005": {
+    "doc_id": "membership_2025",
+    "domain": "ecommerce",
+    "title": "降级与冻结",
+    "file": "corpus/ecommerce/membership_2025.md",
+    "line_start": 34,
+    "line_end": 37
+  },
+  "promo_618__000": {
+    "doc_id": "promo_618",
+    "domain": "ecommerce",
+    "title": "(文档头)",
+    "file": "corpus/ecommerce/promo_618.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "promo_618__001": {
+    "doc_id": "promo_618",
+    "domain": "ecommerce",
+    "title": "活动时间与阶段",
+    "file": "corpus/ecommerce/promo_618.md",
+    "line_start": 5,
+    "line_end": 11
+  },
+  "promo_618__002": {
+    "doc_id": "promo_618",
+    "domain": "ecommerce",
+    "title": "跨店满减",
+    "file": "corpus/ecommerce/promo_618.md",
+    "line_start": 12,
+    "line_end": 18
+  },
+  "promo_618__003": {
+    "doc_id": "promo_618",
+    "domain": "ecommerce",
+    "title": "优惠券与叠加",
+    "file": "corpus/ecommerce/promo_618.md",
+    "line_start": 19,
+    "line_end": 25
+  },
+  "promo_618__004": {
+    "doc_id": "promo_618",
+    "domain": "ecommerce",
+    "title": "预售定金",
+    "file": "corpus/ecommerce/promo_618.md",
+    "line_start": 26,
+    "line_end": 31
+  },
+  "promo_618__005": {
+    "doc_id": "promo_618",
+    "domain": "ecommerce",
+    "title": "价格保护",
+    "file": "corpus/ecommerce/promo_618.md",
+    "line_start": 32,
+    "line_end": 37
+  },
+  "promo_double11__000": {
+    "doc_id": "promo_double11",
+    "domain": "ecommerce",
+    "title": "(文档头)",
+    "file": "corpus/ecommerce/promo_double11.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "promo_double11__001": {
+    "doc_id": "promo_double11",
+    "domain": "ecommerce",
+    "title": "活动时间与阶段",
+    "file": "corpus/ecommerce/promo_double11.md",
+    "line_start": 5,
+    "line_end": 11
+  },
+  "promo_double11__002": {
+    "doc_id": "promo_double11",
+    "domain": "ecommerce",
+    "title": "跨店满减",
+    "file": "corpus/ecommerce/promo_double11.md",
+    "line_start": 12,
+    "line_end": 18
+  },
+  "promo_double11__003": {
+    "doc_id": "promo_double11",
+    "domain": "ecommerce",
+    "title": "优惠券与叠加",
+    "file": "corpus/ecommerce/promo_double11.md",
+    "line_start": 19,
+    "line_end": 25
+  },
+  "promo_double11__004": {
+    "doc_id": "promo_double11",
+    "domain": "ecommerce",
+    "title": "预售定金膨胀",
+    "file": "corpus/ecommerce/promo_double11.md",
+    "line_start": 26,
+    "line_end": 31
+  },
+  "promo_double11__005": {
+    "doc_id": "promo_double11",
+    "domain": "ecommerce",
+    "title": "价格保护与尾款",
+    "file": "corpus/ecommerce/promo_double11.md",
+    "line_start": 32,
+    "line_end": 37
+  },
+  "return_policy_2024__000": {
+    "doc_id": "return_policy_2024",
+    "domain": "ecommerce",
+    "title": "(文档头)",
+    "file": "corpus/ecommerce/return_policy_2024.md",
+    "line_start": 1,
+    "line_end": 5
+  },
+  "return_policy_2024__001": {
+    "doc_id": "return_policy_2024",
+    "domain": "ecommerce",
+    "title": "无理由退货",
+    "file": "corpus/ecommerce/return_policy_2024.md",
+    "line_start": 6,
+    "line_end": 12
+  },
+  "return_policy_2024__002": {
+    "doc_id": "return_policy_2024",
+    "domain": "ecommerce",
+    "title": "换货",
+    "file": "corpus/ecommerce/return_policy_2024.md",
+    "line_start": 13,
+    "line_end": 18
+  },
+  "return_policy_2024__003": {
+    "doc_id": "return_policy_2024",
+    "domain": "ecommerce",
+    "title": "特殊商品不退",
+    "file": "corpus/ecommerce/return_policy_2024.md",
+    "line_start": 19,
+    "line_end": 25
+  },
+  "return_policy_2024__004": {
+    "doc_id": "return_policy_2024",
+    "domain": "ecommerce",
+    "title": "退款时效",
+    "file": "corpus/ecommerce/return_policy_2024.md",
+    "line_start": 26,
+    "line_end": 31
+  },
+  "return_policy_2024__005": {
+    "doc_id": "return_policy_2024",
+    "domain": "ecommerce",
+    "title": "争议处理",
+    "file": "corpus/ecommerce/return_policy_2024.md",
+    "line_start": 32,
+    "line_end": 35
+  },
+  "return_policy_2025__000": {
+    "doc_id": "return_policy_2025",
+    "domain": "ecommerce",
+    "title": "(文档头)",
+    "file": "corpus/ecommerce/return_policy_2025.md",
+    "line_start": 1,
+    "line_end": 5
+  },
+  "return_policy_2025__001": {
+    "doc_id": "return_policy_2025",
+    "domain": "ecommerce",
+    "title": "无理由退货",
+    "file": "corpus/ecommerce/return_policy_2025.md",
+    "line_start": 6,
+    "line_end": 12
+  },
+  "return_policy_2025__002": {
+    "doc_id": "return_policy_2025",
+    "domain": "ecommerce",
+    "title": "换货",
+    "file": "corpus/ecommerce/return_policy_2025.md",
+    "line_start": 13,
+    "line_end": 18
+  },
+  "return_policy_2025__003": {
+    "doc_id": "return_policy_2025",
+    "domain": "ecommerce",
+    "title": "特殊商品不退",
+    "file": "corpus/ecommerce/return_policy_2025.md",
+    "line_start": 19,
+    "line_end": 26
+  },
+  "return_policy_2025__004": {
+    "doc_id": "return_policy_2025",
+    "domain": "ecommerce",
+    "title": "退款时效",
+    "file": "corpus/ecommerce/return_policy_2025.md",
+    "line_start": 27,
+    "line_end": 32
+  },
+  "return_policy_2025__005": {
+    "doc_id": "return_policy_2025",
+    "domain": "ecommerce",
+    "title": "争议处理",
+    "file": "corpus/ecommerce/return_policy_2025.md",
+    "line_start": 33,
+    "line_end": 36
+  },
+  "shipping_policy__000": {
+    "doc_id": "shipping_policy",
+    "domain": "ecommerce",
+    "title": "(文档头)",
+    "file": "corpus/ecommerce/shipping_policy.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "shipping_policy__001": {
+    "doc_id": "shipping_policy",
+    "domain": "ecommerce",
+    "title": "配送时效",
+    "file": "corpus/ecommerce/shipping_policy.md",
+    "line_start": 5,
+    "line_end": 11
+  },
+  "shipping_policy__002": {
+    "doc_id": "shipping_policy",
+    "domain": "ecommerce",
+    "title": "运费标准",
+    "file": "corpus/ecommerce/shipping_policy.md",
+    "line_start": 12,
+    "line_end": 18
+  },
+  "shipping_policy__003": {
+    "doc_id": "shipping_policy",
+    "domain": "ecommerce",
+    "title": "超时赔付",
+    "file": "corpus/ecommerce/shipping_policy.md",
+    "line_start": 19,
+    "line_end": 25
+  },
+  "shipping_policy__004": {
+    "doc_id": "shipping_policy",
+    "domain": "ecommerce",
+    "title": "签收与验货",
+    "file": "corpus/ecommerce/shipping_policy.md",
+    "line_start": 26,
+    "line_end": 31
+  },
+  "warranty_policy__000": {
+    "doc_id": "warranty_policy",
+    "domain": "ecommerce",
+    "title": "(文档头)",
+    "file": "corpus/ecommerce/warranty_policy.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "warranty_policy__001": {
+    "doc_id": "warranty_policy",
+    "domain": "ecommerce",
+    "title": "保修期限",
+    "file": "corpus/ecommerce/warranty_policy.md",
+    "line_start": 5,
+    "line_end": 11
+  },
+  "warranty_policy__002": {
+    "doc_id": "warranty_policy",
+    "domain": "ecommerce",
+    "title": "不保修范围",
+    "file": "corpus/ecommerce/warranty_policy.md",
+    "line_start": 12,
+    "line_end": 19
+  },
+  "warranty_policy__003": {
+    "doc_id": "warranty_policy",
+    "domain": "ecommerce",
+    "title": "保修流程",
+    "file": "corpus/ecommerce/warranty_policy.md",
+    "line_start": 20,
+    "line_end": 26
+  },
+  "warranty_policy__004": {
+    "doc_id": "warranty_policy",
+    "domain": "ecommerce",
+    "title": "三包与折旧",
+    "file": "corpus/ecommerce/warranty_policy.md",
+    "line_start": 27,
+    "line_end": 32
+  },
+  "attendance_policy__000": {
+    "doc_id": "attendance_policy",
+    "domain": "enterprise",
+    "title": "(文档头)",
+    "file": "corpus/enterprise/attendance_policy.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "attendance_policy__001": {
+    "doc_id": "attendance_policy",
+    "domain": "enterprise",
+    "title": "工作时间",
+    "file": "corpus/enterprise/attendance_policy.md",
+    "line_start": 5,
+    "line_end": 11
+  },
+  "attendance_policy__002": {
+    "doc_id": "attendance_policy",
+    "domain": "enterprise",
+    "title": "打卡与迟到",
+    "file": "corpus/enterprise/attendance_policy.md",
+    "line_start": 12,
+    "line_end": 18
+  },
+  "attendance_policy__003": {
+    "doc_id": "attendance_policy",
+    "domain": "enterprise",
+    "title": "加班管理",
+    "file": "corpus/enterprise/attendance_policy.md",
+    "line_start": 19,
+    "line_end": 26
+  },
+  "attendance_policy__004": {
+    "doc_id": "attendance_policy",
+    "domain": "enterprise",
+    "title": "外出与出差考勤",
+    "file": "corpus/enterprise/attendance_policy.md",
+    "line_start": 27,
+    "line_end": 32
+  },
+  "expense_policy__000": {
+    "doc_id": "expense_policy",
+    "domain": "enterprise",
+    "title": "(文档头)",
+    "file": "corpus/enterprise/expense_policy.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "expense_policy__001": {
+    "doc_id": "expense_policy",
+    "domain": "enterprise",
+    "title": "报销时限",
+    "file": "corpus/enterprise/expense_policy.md",
+    "line_start": 5,
+    "line_end": 10
+  },
+  "expense_policy__002": {
+    "doc_id": "expense_policy",
+    "domain": "enterprise",
+    "title": "票据要求",
+    "file": "corpus/enterprise/expense_policy.md",
+    "line_start": 11,
+    "line_end": 17
+  },
+  "expense_policy__003": {
+    "doc_id": "expense_policy",
+    "domain": "enterprise",
+    "title": "审批权限",
+    "file": "corpus/enterprise/expense_policy.md",
+    "line_start": 18,
+    "line_end": 24
+  },
+  "expense_policy__004": {
+    "doc_id": "expense_policy",
+    "domain": "enterprise",
+    "title": "不予报销范围",
+    "file": "corpus/enterprise/expense_policy.md",
+    "line_start": 25,
+    "line_end": 31
+  },
+  "expense_policy__005": {
+    "doc_id": "expense_policy",
+    "domain": "enterprise",
+    "title": "报销时效与到账",
+    "file": "corpus/enterprise/expense_policy.md",
+    "line_start": 32,
+    "line_end": 36
+  },
+  "it_security_policy__000": {
+    "doc_id": "it_security_policy",
+    "domain": "enterprise",
+    "title": "(文档头)",
+    "file": "corpus/enterprise/it_security_policy.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "it_security_policy__001": {
+    "doc_id": "it_security_policy",
+    "domain": "enterprise",
+    "title": "账号与密码",
+    "file": "corpus/enterprise/it_security_policy.md",
+    "line_start": 5,
+    "line_end": 11
+  },
+  "it_security_policy__002": {
+    "doc_id": "it_security_policy",
+    "domain": "enterprise",
+    "title": "终端与外设管控",
+    "file": "corpus/enterprise/it_security_policy.md",
+    "line_start": 12,
+    "line_end": 18
+  },
+  "it_security_policy__003": {
+    "doc_id": "it_security_policy",
+    "domain": "enterprise",
+    "title": "数据分级与外发",
+    "file": "corpus/enterprise/it_security_policy.md",
+    "line_start": 19,
+    "line_end": 25
+  },
+  "it_security_policy__004": {
+    "doc_id": "it_security_policy",
+    "domain": "enterprise",
+    "title": "违规处理",
+    "file": "corpus/enterprise/it_security_policy.md",
+    "line_start": 26,
+    "line_end": 30
+  },
+  "leave_policy__000": {
+    "doc_id": "leave_policy",
+    "domain": "enterprise",
+    "title": "(文档头)",
+    "file": "corpus/enterprise/leave_policy.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "leave_policy__001": {
+    "doc_id": "leave_policy",
+    "domain": "enterprise",
+    "title": "年假",
+    "file": "corpus/enterprise/leave_policy.md",
+    "line_start": 5,
+    "line_end": 12
+  },
+  "leave_policy__002": {
+    "doc_id": "leave_policy",
+    "domain": "enterprise",
+    "title": "年假清零与顺延",
+    "file": "corpus/enterprise/leave_policy.md",
+    "line_start": 13,
+    "line_end": 18
+  },
+  "leave_policy__003": {
+    "doc_id": "leave_policy",
+    "domain": "enterprise",
+    "title": "病假",
+    "file": "corpus/enterprise/leave_policy.md",
+    "line_start": 19,
+    "line_end": 25
+  },
+  "leave_policy__004": {
+    "doc_id": "leave_policy",
+    "domain": "enterprise",
+    "title": "婚假与产假",
+    "file": "corpus/enterprise/leave_policy.md",
+    "line_start": 26,
+    "line_end": 32
+  },
+  "leave_policy__005": {
+    "doc_id": "leave_policy",
+    "domain": "enterprise",
+    "title": "事假",
+    "file": "corpus/enterprise/leave_policy.md",
+    "line_start": 33,
+    "line_end": 37
+  },
+  "office_location__000": {
+    "doc_id": "office_location",
+    "domain": "enterprise",
+    "title": "(文档头)",
+    "file": "corpus/enterprise/office_location.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "office_location__001": {
+    "doc_id": "office_location",
+    "domain": "enterprise",
+    "title": "办公城市与地址",
+    "file": "corpus/enterprise/office_location.md",
+    "line_start": 5,
+    "line_end": 12
+  },
+  "office_location__002": {
+    "doc_id": "office_location",
+    "domain": "enterprise",
+    "title": "工位与门禁",
+    "file": "corpus/enterprise/office_location.md",
+    "line_start": 13,
+    "line_end": 19
+  },
+  "office_location__003": {
+    "doc_id": "office_location",
+    "domain": "enterprise",
+    "title": "会议室与公共区域",
+    "file": "corpus/enterprise/office_location.md",
+    "line_start": 20,
+    "line_end": 26
+  },
+  "office_location__004": {
+    "doc_id": "office_location",
+    "domain": "enterprise",
+    "title": "差旅住宿指引",
+    "file": "corpus/enterprise/office_location.md",
+    "line_start": 27,
+    "line_end": 31
+  },
+  "promotion_policy__000": {
+    "doc_id": "promotion_policy",
+    "domain": "enterprise",
+    "title": "(文档头)",
+    "file": "corpus/enterprise/promotion_policy.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "promotion_policy__001": {
+    "doc_id": "promotion_policy",
+    "domain": "enterprise",
+    "title": "职级体系",
+    "file": "corpus/enterprise/promotion_policy.md",
+    "line_start": 5,
+    "line_end": 10
+  },
+  "promotion_policy__002": {
+    "doc_id": "promotion_policy",
+    "domain": "enterprise",
+    "title": "晋升周期与名额",
+    "file": "corpus/enterprise/promotion_policy.md",
+    "line_start": 11,
+    "line_end": 17
+  },
+  "promotion_policy__003": {
+    "doc_id": "promotion_policy",
+    "domain": "enterprise",
+    "title": "申报条件",
+    "file": "corpus/enterprise/promotion_policy.md",
+    "line_start": 18,
+    "line_end": 24
+  },
+  "promotion_policy__004": {
+    "doc_id": "promotion_policy",
+    "domain": "enterprise",
+    "title": "评审方式",
+    "file": "corpus/enterprise/promotion_policy.md",
+    "line_start": 25,
+    "line_end": 31
+  },
+  "promotion_policy__005": {
+    "doc_id": "promotion_policy",
+    "domain": "enterprise",
+    "title": "越级晋升与降级",
+    "file": "corpus/enterprise/promotion_policy.md",
+    "line_start": 32,
+    "line_end": 36
+  },
+  "remote_work_policy__000": {
+    "doc_id": "remote_work_policy",
+    "domain": "enterprise",
+    "title": "(文档头)",
+    "file": "corpus/enterprise/remote_work_policy.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "remote_work_policy__001": {
+    "doc_id": "remote_work_policy",
+    "domain": "enterprise",
+    "title": "适用岗位与额度",
+    "file": "corpus/enterprise/remote_work_policy.md",
+    "line_start": 5,
+    "line_end": 11
+  },
+  "remote_work_policy__002": {
+    "doc_id": "remote_work_policy",
+    "domain": "enterprise",
+    "title": "申请与审批",
+    "file": "corpus/enterprise/remote_work_policy.md",
+    "line_start": 12,
+    "line_end": 18
+  },
+  "remote_work_policy__003": {
+    "doc_id": "remote_work_policy",
+    "domain": "enterprise",
+    "title": "设备与费用补贴",
+    "file": "corpus/enterprise/remote_work_policy.md",
+    "line_start": 19,
+    "line_end": 25
+  },
+  "remote_work_policy__004": {
+    "doc_id": "remote_work_policy",
+    "domain": "enterprise",
+    "title": "协作与响应要求",
+    "file": "corpus/enterprise/remote_work_policy.md",
+    "line_start": 26,
+    "line_end": 32
+  },
+  "remote_work_policy__005": {
+    "doc_id": "remote_work_policy",
+    "domain": "enterprise",
+    "title": "终止情形",
+    "file": "corpus/enterprise/remote_work_policy.md",
+    "line_start": 33,
+    "line_end": 37
+  },
+  "training_policy__000": {
+    "doc_id": "training_policy",
+    "domain": "enterprise",
+    "title": "(文档头)",
+    "file": "corpus/enterprise/training_policy.md",
+    "line_start": 1,
+    "line_end": 4
+  },
+  "training_policy__001": {
+    "doc_id": "training_policy",
+    "domain": "enterprise",
+    "title": "外部培训与服务期",
+    "file": "corpus/enterprise/training_policy.md",
+    "line_start": 5,
+    "line_end": 11
+  },
+  "training_policy__002": {
+    "doc_id": "training_policy",
+    "domain": "enterprise",
+    "title": "培训期交通与住宿",
+    "file": "corpus/enterprise/training_policy.md",
+    "line_start": 12,
+    "line_end": 18
+  },
+  "training_policy__003": {
+    "doc_id": "training_policy",
+    "domain": "enterprise",
+    "title": "内部培训与学时",
+    "file": "corpus/enterprise/training_policy.md",
+    "line_start": 19,
+    "line_end": 25
+  },
+  "training_policy__004": {
+    "doc_id": "training_policy",
+    "domain": "enterprise",
+    "title": "认证与技能补贴",
+    "file": "corpus/enterprise/training_policy.md",
+    "line_start": 26,
+    "line_end": 32
+  },
+  "training_policy__005": {
+    "doc_id": "training_policy",
+    "domain": "enterprise",
+    "title": "培训考核",
+    "file": "corpus/enterprise/training_policy.md",
+    "line_start": 33,
+    "line_end": 37
+  },
+  "travel_policy_2024__000": {
+    "doc_id": "travel_policy_2024",
+    "domain": "enterprise",
+    "title": "(文档头)",
+    "file": "corpus/enterprise/travel_policy_2024.md",
+    "line_start": 1,
+    "line_end": 5
+  },
+  "travel_policy_2024__001": {
+    "doc_id": "travel_policy_2024",
+    "domain": "enterprise",
+    "title": "适用范围与出差审批",
+    "file": "corpus/enterprise/travel_policy_2024.md",
+    "line_start": 6,
+    "line_end": 12
+  },
+  "travel_policy_2024__002": {
+    "doc_id": "travel_policy_2024",
+    "domain": "enterprise",
+    "title": "住宿费标准",
+    "file": "corpus/enterprise/travel_policy_2024.md",
+    "line_start": 13,
+    "line_end": 20
+  },
+  "travel_policy_2024__003": {
+    "doc_id": "travel_policy_2024",
+    "domain": "enterprise",
+    "title": "交通费标准",
+    "file": "corpus/enterprise/travel_policy_2024.md",
+    "line_start": 21,
+    "line_end": 27
+  },
+  "travel_policy_2024__004": {
+    "doc_id": "travel_policy_2024",
+    "domain": "enterprise",
+    "title": "伙食补助",
+    "file": "corpus/enterprise/travel_policy_2024.md",
+    "line_start": 28,
+    "line_end": 33
+  },
+  "travel_policy_2024__005": {
+    "doc_id": "travel_policy_2024",
+    "domain": "enterprise",
+    "title": "预借与结算",
+    "file": "corpus/enterprise/travel_policy_2024.md",
+    "line_start": 34,
+    "line_end": 38
+  },
+  "travel_policy_2025__000": {
+    "doc_id": "travel_policy_2025",
+    "domain": "enterprise",
+    "title": "(文档头)",
+    "file": "corpus/enterprise/travel_policy_2025.md",
+    "line_start": 1,
+    "line_end": 5
+  },
+  "travel_policy_2025__001": {
+    "doc_id": "travel_policy_2025",
+    "domain": "enterprise",
+    "title": "适用范围与出差审批",
+    "file": "corpus/enterprise/travel_policy_2025.md",
+    "line_start": 6,
+    "line_end": 12
+  },
+  "travel_policy_2025__002": {
+    "doc_id": "travel_policy_2025",
+    "domain": "enterprise",
+    "title": "住宿费标准",
+    "file": "corpus/enterprise/travel_policy_2025.md",
+    "line_start": 13,
+    "line_end": 19
+  },
+  "travel_policy_2025__003": {
+    "doc_id": "travel_policy_2025",
+    "domain": "enterprise",
+    "title": "职级住宿上浮",
+    "file": "corpus/enterprise/travel_policy_2025.md",
+    "line_start": 20,
+    "line_end": 26
+  },
+  "travel_policy_2025__004": {
+    "doc_id": "travel_policy_2025",
+    "domain": "enterprise",
+    "title": "交通费标准",
+    "file": "corpus/enterprise/travel_policy_2025.md",
+    "line_start": 27,
+    "line_end": 33
+  },
+  "travel_policy_2025__005": {
+    "doc_id": "travel_policy_2025",
+    "domain": "enterprise",
+    "title": "伙食补助",
+    "file": "corpus/enterprise/travel_policy_2025.md",
+    "line_start": 34,
+    "line_end": 40
+  },
+  "travel_policy_2025__006": {
+    "doc_id": "travel_policy_2025",
+    "domain": "enterprise",
+    "title": "预借与结算",
+    "file": "corpus/enterprise/travel_policy_2025.md",
+    "line_start": 41,
+    "line_end": 46
+  }
+}
