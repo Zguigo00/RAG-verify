@@ -1,0 +1,15 @@
+{
+  "_comment": "行业注册表。补行业 = 在这里加一条 + 建 corpus/<domain>/ 语料目录 + 出题。schema 不用改。",
+  "domains": {
+    "enterprise":   { "label": "企业人事/制度", "status": "active",  "note": "数值条款、年度多版本，擅长 multi_hop / temporal" },
+    "ecommerce":    { "label": "电商零售",     "status": "active",  "note": "促销规则、退换货，活动有效期天然 temporal" },
+    "medical":      { "label": "医疗药品",     "status": "planned", "note": "剂量禁忌适应症，Faithfulness / 拒答权重最高" },
+    "finance":      { "label": "金融理财",     "status": "planned", "note": "利率费率风控阈值，表格与数值精度" },
+    "legal":        { "label": "法律合同",     "status": "planned", "note": "条款与修订件，Citation / 版本混淆" },
+    "education":    { "label": "教育教务",     "status": "planned", "note": "选课学分奖助，multi_doc" },
+    "telecom":      { "label": "电信运营商",   "status": "planned", "note": "套餐资费合约期，表格 / 模糊问题" },
+    "manufacturing":{ "label": "制造设备",     "status": "planned", "note": "参数维保安规，hard（表格/图文）" },
+    "logistics":    { "label": "物流供应链",   "status": "planned", "note": "时效赔偿标准，数值 / 冲突文档" },
+    "government":   { "label": "政务社保",     "status": "planned", "note": "政策报销比例，多版本政策" }
+  }
+}
