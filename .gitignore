@@ -12,3 +12,7 @@ venv/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# 评测输出（只保留 sample 作为输出契约样例）
+results/*
+!results/results_sample.json

@@ -1,0 +1,353 @@
+{
+  "systems": {
+    "team-A": {
+      "system_name": "team-A",
+      "n_questions": 3,
+      "n_judged": 3,
+      "correct_rate": 0.6666666666666666,
+      "retrieval": {
+        "hit@1": 1.0,
+        "hit@10": 1.0,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "mrr@1": 1.0,
+        "mrr@10": 1.0,
+        "mrr@3": 1.0,
+        "mrr@5": 1.0,
+        "ndcg@1": 1.0,
+        "ndcg@10": 1.0,
+        "ndcg@3": 1.0,
+        "ndcg@5": 1.0,
+        "precision@1": 1.0,
+        "precision@10": 0.1,
+        "precision@3": 0.3333333333333333,
+        "precision@5": 0.2,
+        "recall@1": 1.0,
+        "recall@10": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "retrieved_count": 2.5
+      },
+      "by_category": {
+        "hard": {
+          "n": 1,
+          "correct_rate": 0.0,
+          "retrieval": {
+            "hit@1": 1.0,
+            "hit@10": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0,
+            "mrr@1": 1.0,
+            "mrr@10": 1.0,
+            "mrr@3": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@1": 1.0,
+            "ndcg@10": 1.0,
+            "ndcg@3": 1.0,
+            "ndcg@5": 1.0,
+            "precision@1": 1.0,
+            "precision@10": 0.1,
+            "precision@3": 0.3333333333333333,
+            "precision@5": 0.2,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0,
+            "retrieved_count": 2.0
+          }
+        },
+        "no_answer": {
+          "n": 1,
+          "correct_rate": 1.0,
+          "retrieval": {}
+        },
+        "simple": {
+          "n": 1,
+          "correct_rate": 1.0,
+          "retrieval": {
+            "hit@1": 1.0,
+            "hit@10": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0,
+            "mrr@1": 1.0,
+            "mrr@10": 1.0,
+            "mrr@3": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@1": 1.0,
+            "ndcg@10": 1.0,
+            "ndcg@3": 1.0,
+            "ndcg@5": 1.0,
+            "precision@1": 1.0,
+            "precision@10": 0.1,
+            "precision@3": 0.3333333333333333,
+            "precision@5": 0.2,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0,
+            "retrieved_count": 3.0
+          }
+        }
+      },
+      "system": {
+        "n_questions": 3,
+        "n_error": 0,
+        "n_timeout": 0,
+        "error_rate": 0.0,
+        "timeout_rate": 0.0,
+        "latency_p50_ms": 1280.0,
+        "latency_p95_ms": 1406.0,
+        "latency_p99_ms": 1417.2,
+        "latency_mean_ms": 1186.6666666666667,
+        "input_tokens_mean": 3033.3333333333335,
+        "output_tokens_mean": 233.33333333333334,
+        "cost_per_query_usd": 0.009666666666666667,
+        "cost_total_usd": 0.029
+      },
+      "error_breakdown": {
+        "citation_error": 1
+      },
+      "per_question": [
+        {
+          "question_id": "q001",
+          "category": "simple",
+          "is_correct": true,
+          "retrieval": {
+            "hit@1": 1.0,
+            "recall@1": 1.0,
+            "precision@1": 1.0,
+            "mrr@1": 1.0,
+            "ndcg@1": 1.0,
+            "hit@3": 1.0,
+            "recall@3": 1.0,
+            "precision@3": 0.3333333333333333,
+            "mrr@3": 1.0,
+            "ndcg@3": 1.0,
+            "hit@5": 1.0,
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0,
+            "hit@10": 1.0,
+            "recall@10": 1.0,
+            "precision@10": 0.1,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "retrieved_count": 3.0
+          },
+          "triage": {
+            "kind": "none",
+            "label": "无错误",
+            "reason": "答案正确",
+            "advice": "",
+            "is_correct": true
+          }
+        },
+        {
+          "question_id": "q003",
+          "category": "no_answer",
+          "is_correct": true,
+          "retrieval": null,
+          "triage": {
+            "kind": "none",
+            "label": "无错误",
+            "reason": "无答案题正确拒答",
+            "advice": "",
+            "is_correct": true
+          }
+        },
+        {
+          "question_id": "q008",
+          "category": "hard",
+          "is_correct": false,
+          "retrieval": {
+            "hit@1": 1.0,
+            "recall@1": 1.0,
+            "precision@1": 1.0,
+            "mrr@1": 1.0,
+            "ndcg@1": 1.0,
+            "hit@3": 1.0,
+            "recall@3": 1.0,
+            "precision@3": 0.3333333333333333,
+            "mrr@3": 1.0,
+            "ndcg@3": 1.0,
+            "hit@5": 1.0,
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "mrr@5": 1.0,
+            "ndcg@5": 1.0,
+            "hit@10": 1.0,
+            "recall@10": 1.0,
+            "precision@10": 0.1,
+            "mrr@10": 1.0,
+            "ndcg@10": 1.0,
+            "retrieved_count": 2.0
+          },
+          "triage": {
+            "kind": "citation_error",
+            "label": "Citation Error",
+            "reason": "证据已进入 context，但引用指向了非标准答案的 chunk ['chunk_301']（典型版本混淆：改了引用/时间消歧，不必动检索）",
+            "advice": "引用生成逻辑 / 版本消歧（时间元数据过滤）",
+            "is_correct": false
+          }
+        }
+      ],
+      "pareto": true
+    },
+    "team-B": {
+      "system_name": "team-B",
+      "n_questions": 3,
+      "n_judged": 3,
+      "correct_rate": 0.3333333333333333,
+      "retrieval": {
+        "hit@1": 0.0,
+        "hit@10": 1.0,
+        "hit@3": 1.0,
+        "hit@5": 1.0,
+        "mrr@1": 0.0,
+        "mrr@10": 0.5,
+        "mrr@3": 0.5,
+        "mrr@5": 0.5,
+        "ndcg@1": 0.0,
+        "ndcg@10": 0.6309297535714575,
+        "ndcg@3": 0.6309297535714575,
+        "ndcg@5": 0.6309297535714575,
+        "precision@1": 0.0,
+        "precision@10": 0.1,
+        "precision@3": 0.3333333333333333,
+        "precision@5": 0.2,
+        "recall@1": 0.0,
+        "recall@10": 1.0,
+        "recall@3": 1.0,
+        "recall@5": 1.0,
+        "retrieved_count": 5.0
+      },
+      "by_category": {
+        "multi_hop": {
+          "n": 1,
+          "correct_rate": 0.0,
+          "retrieval": {}
+        },
+        "no_answer": {
+          "n": 1,
+          "correct_rate": 0.0,
+          "retrieval": {}
+        },
+        "simple": {
+          "n": 1,
+          "correct_rate": 1.0,
+          "retrieval": {
+            "hit@1": 0.0,
+            "hit@10": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0,
+            "mrr@1": 0.0,
+            "mrr@10": 0.5,
+            "mrr@3": 0.5,
+            "mrr@5": 0.5,
+            "ndcg@1": 0.0,
+            "ndcg@10": 0.6309297535714575,
+            "ndcg@3": 0.6309297535714575,
+            "ndcg@5": 0.6309297535714575,
+            "precision@1": 0.0,
+            "precision@10": 0.1,
+            "precision@3": 0.3333333333333333,
+            "precision@5": 0.2,
+            "recall@1": 0.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0,
+            "retrieved_count": 5.0
+          }
+        }
+      },
+      "system": {
+        "n_questions": 3,
+        "n_error": 1,
+        "n_timeout": 1,
+        "error_rate": 0.3333333333333333,
+        "timeout_rate": 0.3333333333333333,
+        "latency_p50_ms": 2400.0,
+        "latency_p95_ms": 27239.999999999996,
+        "latency_p99_ms": 29448.0,
+        "latency_mean_ms": 11500.0,
+        "input_tokens_mean": 4000.0,
+        "output_tokens_mean": 157.5,
+        "cost_per_query_usd": 0.0215,
+        "cost_total_usd": 0.043
+      },
+      "error_breakdown": {
+        "no_answer_error": 1,
+        "system_error": 1
+      },
+      "per_question": [
+        {
+          "question_id": "q001",
+          "category": "simple",
+          "is_correct": true,
+          "retrieval": {
+            "hit@1": 0.0,
+            "recall@1": 0.0,
+            "precision@1": 0.0,
+            "mrr@1": 0.0,
+            "ndcg@1": 0.0,
+            "hit@3": 1.0,
+            "recall@3": 1.0,
+            "precision@3": 0.3333333333333333,
+            "mrr@3": 0.5,
+            "ndcg@3": 0.6309297535714575,
+            "hit@5": 1.0,
+            "recall@5": 1.0,
+            "precision@5": 0.2,
+            "mrr@5": 0.5,
+            "ndcg@5": 0.6309297535714575,
+            "hit@10": 1.0,
+            "recall@10": 1.0,
+            "precision@10": 0.1,
+            "mrr@10": 0.5,
+            "ndcg@10": 0.6309297535714575,
+            "retrieved_count": 5.0
+          },
+          "triage": {
+            "kind": "none",
+            "label": "无错误",
+            "reason": "答案正确",
+            "advice": "",
+            "is_correct": true
+          }
+        },
+        {
+          "question_id": "q003",
+          "category": "no_answer",
+          "is_correct": false,
+          "retrieval": null,
+          "triage": {
+            "kind": "no_answer_error",
+            "label": "No-answer Error",
+            "reason": "知识库无答案却给出实质回答（幻觉）；应答『根据现有知识库，无法找到相关信息』",
+            "advice": "拒答策略（Abstention Prompt / 无答案阈值）",
+            "is_correct": false
+          }
+        },
+        {
+          "question_id": "q002",
+          "category": "multi_hop",
+          "is_correct": false,
+          "retrieval": null,
+          "triage": {
+            "kind": "system_error",
+            "label": "System Error",
+            "reason": "执行失败: timeout: reranker request exceeded 30s",
+            "advice": "工程稳定性（超时/重试/降级）",
+            "is_correct": false
+          }
+        }
+      ],
+      "pareto": false
+    }
+  },
+  "judge": "rule-based (approx_correct) + human_labels override",
+  "pareto_front": [
+    "team-A"
+  ]
+}
