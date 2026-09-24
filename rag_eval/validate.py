@@ -90,10 +90,19 @@ def schema_errors(kind: str, items: list[tuple[int, dict]]) -> list[str]:
 
 # --------------------------------------------------------- 跨行一致性校验
 
+def load_domains() -> dict[str, dict]:
+    """corpus/domains.json 的行业注册表。补行业只改这个文件，schema 不动。"""
+    p = ROOT / "corpus" / "domains.json"
+    if not p.exists():
+        return {}
+    return json.loads(p.read_text(encoding="utf-8")).get("domains", {})
+
+
 def check_dataset(items: list[tuple[int, dict]]) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warns: list[str] = []
     seen: dict[str, int] = {}
+    registry = load_domains()
 
     for line_no, rec in items:
         qid = rec.get("question_id")
@@ -103,6 +112,18 @@ def check_dataset(items: list[tuple[int, dict]]) -> tuple[list[str], list[str]]:
             )
         else:
             seen[qid] = line_no
+
+        domain = rec.get("domain")
+        if registry and domain not in registry:
+            warns.append(
+                f"dataset:{line_no}  domain `{domain}` 未在 corpus/domains.json 注册，"
+                f"Dashboard 的行业分组会归到「未注册」"
+            )
+        elif registry and registry.get(domain, {}).get("status") != "active":
+            warns.append(
+                f"dataset:{line_no}  domain `{domain}` 状态为 "
+                f"{registry.get(domain, {}).get('status')}，尚无 corpus/{domain}/ 语料"
+            )
 
         # schema 的 if/then 已覆盖，这里给更清楚的中文提示
         if rec.get("expected_abstain") and rec.get("ground_truth_chunks"):

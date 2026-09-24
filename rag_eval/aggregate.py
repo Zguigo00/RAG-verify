@@ -45,6 +45,7 @@ def per_question(
             {
                 "question_id": rec["question_id"],
                 "category": gt.get("category"),
+                "domain": gt.get("domain"),
                 "is_correct": is_correct,
                 "retrieval": retrieval_metrics(rec, gt.get("ground_truth_chunks") or [], ks),
                 "triage": triage(rec, gt, is_correct=is_correct),
@@ -80,6 +81,18 @@ def build_results(
             "retrieval": mean_dict([r["retrieval"] for r in rs if r["retrieval"] is not None]),
         }
 
+    # 按行业分组（完整版覆盖各行各业，行业雷达图/排行榜筛选用）
+    by_dom: dict[str, list[dict]] = {}
+    for r in rows:
+        by_dom.setdefault(r.get("domain") or "?", []).append(r)
+    by_domain = {}
+    for dom, rs in sorted(by_dom.items()):
+        by_domain[dom] = {
+            "n": len(rs),
+            "correct_rate": mean(1.0 if r["is_correct"] else 0.0 for r in rs),
+            "retrieval": mean_dict([r["retrieval"] for r in rs if r["retrieval"] is not None]),
+        }
+
     judged = [r for r in rows if r["is_correct"] is not None]
     return {
         "system_name": name,
@@ -88,6 +101,7 @@ def build_results(
         "correct_rate": mean(1.0 if r["is_correct"] else 0.0 for r in judged),
         "retrieval": mean_dict(ret_rows),
         "by_category": by_category,
+        "by_domain": by_domain,
         "system": system_metrics(records, price),
         "error_breakdown": error_breakdown([r["triage"] for r in rows]),
         "per_question": rows,

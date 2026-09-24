@@ -7,6 +7,7 @@
   "required": [
     "question_id",
     "question",
+    "domain",
     "category",
     "ground_truth_answer",
     "ground_truth_chunks",
@@ -18,12 +19,17 @@
     "question_id": {
       "type": "string",
       "pattern": "^[a-zA-Z0-9_\\-]{1,64}$",
-      "description": "全局唯一题号，例如 q001。跨所有题型不重复。"
+      "description": "全局唯一题号，建议带行业前缀便于识别，例如 ent_001 / ecom_023。跨所有题型不重复。"
     },
     "question": {
       "type": "string",
       "minLength": 1,
       "description": "用户问题原文。"
+    },
+    "domain": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,31}$",
+      "description": "行业/领域，与 category 正交。完整版覆盖各行各业，补行业只需在 corpus/domains.json 注册并加 corpus/<domain>/ 语料。当前注册：enterprise / ecommerce。"
     },
     "category": {
       "description": "题型。分类别统计用，见文档 §44「不要只测平均值」。",
