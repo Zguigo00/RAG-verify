@@ -249,14 +249,53 @@ def cmd_make_public(args: argparse.Namespace) -> int:
     """发卷：剥离标准答案与一切泄题字段，产出公开版考卷。"""
     from .pack import write_public
 
-    return write_public(Path(args.dataset), Path(args.out))
+    return write_public(
+        Path(args.dataset),
+        Path(args.out),
+        hold_out=args.hold_out,
+        hold_out_out=Path(args.hold_out_out) if args.hold_out_out else None,
+    )
 
 
 def cmd_pack(args: argparse.Namespace) -> int:
     """打包参赛方工具箱：公开考卷 + 官方 chunk 库 + 模板 + 校验器。"""
     from .pack import build_kit
 
-    return build_kit(Path(args.dataset), Path(args.out))
+    return build_kit(Path(args.dataset), Path(args.out), hold_out=args.hold_out)
+
+
+def cmd_audit(args: argparse.Namespace) -> int:
+    """一致性审计：不看答案对错，只看答题卡的数据自不自洽（反作弊抓手）。"""
+    import json
+
+    from .audit import audit_records
+
+    records = _load_runs(args.run_log)
+    report = audit_records(records)
+
+    for name, r in report.items():
+        mark = {"clean": "干净", "low": "轻微", "medium": "可疑", "high": "高危"}[r["risk"]]
+        print(f"\n=== {name}  风险={mark}  命中 {r['flagged_records']}/{r['n_records']} 条")
+        if not r["signals"]:
+            print("  无异常信号")
+        for sig, n in sorted(r["signals"].items(), key=lambda x: -x[1]):
+            print(f"  {sig:<26} x{n}")
+        shown = 0
+        for d in r["details"]:
+            for s in d["signals"]:
+                if s["level"] == "low" and not args.verbose:
+                    continue
+                if shown >= args.limit:
+                    break
+                print(f"    [{s['level']:<6}] {d['question_id']}  {s['signal']}: {s['detail'][:78]}")
+                shown += 1
+
+    out = Path(args.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"\n已写出 {out}")
+    print("提示：命中的是可疑信号不是作弊定罪，每条都可能有正常解释，请人工复核。")
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -305,12 +344,24 @@ def main(argv: list[str] | None = None) -> int:
     mp = sub.add_parser("make-public", help="发卷：剥离标准答案与泄题字段，产出公开版考卷")
     mp.add_argument("--dataset", required=True)
     mp.add_argument("--out", default="dataset/dataset_public.jsonl")
+    mp.add_argument("--hold-out", type=int, default=0,
+                    help="扣留 N 题作暗题（按题型分层抽取），收官补测用")
+    mp.add_argument("--hold-out-out", default="dataset/dataset_holdout.jsonl")
     mp.set_defaults(func=cmd_make_public)
 
     pk = sub.add_parser("pack", help="打包参赛方工具箱 zip（公开考卷+chunk 库+模板+校验器）")
     pk.add_argument("--dataset", required=True)
     pk.add_argument("--out", default="dist/rag-bench-kit.zip")
+    pk.add_argument("--hold-out", type=int, default=0,
+                    help="扣留 N 题作暗题，不进工具箱，另存为 dist/dataset_holdout.jsonl")
     pk.set_defaults(func=cmd_pack)
+
+    ad = sub.add_parser("audit", help="一致性审计：检测硬编码/伪造中间过程的可疑信号")
+    ad.add_argument("--run-log", action="append", required=True)
+    ad.add_argument("--out", default="results/audit.json")
+    ad.add_argument("--limit", type=int, default=12, help="最多打印几条明细（默认 12）")
+    ad.add_argument("--verbose", action="store_true", help="连 low 级信号一起打印")
+    ad.set_defaults(func=cmd_audit)
 
     args = parser.parse_args(argv)
     return args.func(args)
