@@ -112,6 +112,10 @@
         "type": ["number", "null"]
       }
     },
+    "debug": {
+      "type": ["object", "null"],
+      "description": "自由调试区：参赛方自测指标、内部 trace、备注等任意结构，不参与评分、不校验内容。想加自定义字段一律放这里，不要加在顶层（顶层 additionalProperties: false）。"
+    },
     "error": {
       "type": ["string", "null"],
       "default": null,

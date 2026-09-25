@@ -153,6 +153,58 @@ def check_dataset(items: list[tuple[int, dict]]) -> tuple[list[str], list[str]]:
     return errors, warns
 
 
+def load_chunk_index() -> dict[str, dict]:
+    """corpus/chunk_index.json 的官方 chunk 编号索引。"""
+    p = ROOT / "corpus" / "chunk_index.json"
+    if not p.exists():
+        return {}
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+def check_chunk_ids(items: list[tuple[int, dict]]) -> tuple[list[str], list[str]]:
+    """校验 run_log 里的 chunk_id 是否为官方编号（对照 corpus/chunk_index.json）。
+
+    这是参赛方唯一的自校验依据 —— 公开考卷没有 ground_truth_chunks，
+    他们无从比对，但可以确认「我填的编号确实存在于官方 chunk 库」。
+    text 与官方原文不一致只给警告：有人会截断/改写，不一定是作弊。
+    """
+    errors: list[str] = []
+    warns: list[str] = []
+    index = load_chunk_index()
+    if not index:
+        return errors, warns
+
+    # 官方原文一次加载，避免逐 chunk 重读
+    official_text: dict[str, str] = {}
+    cp = ROOT / "corpus" / "chunks.jsonl"
+    if cp.exists():
+        for line in cp.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                ch = json.loads(line)
+                official_text[ch.get("chunk_id")] = ch.get("text") or ""
+
+    for line_no, rec in items:
+        for c in rec.get("retrieved_chunks") or []:
+            cid = c.get("chunk_id")
+            if cid is None:
+                continue
+            if cid not in index:
+                errors.append(
+                    f"run_log:{line_no}  chunk_id `{cid}` 不在官方 chunk 库中。"
+                    f"官方编号形如 <doc_id>__<NNN>，完整清单见 corpus/chunk_index.json。"
+                    f"若你的检索引擎自产 ID，请把官方 chunk_id 塞进元数据后在映射时取出。"
+                )
+                continue
+            text = c.get("text")
+            official = official_text.get(cid)
+            if text and official and text.strip() not in official and official.strip() not in text:
+                warns.append(
+                    f"run_log:{line_no}  chunk_id `{cid}` 的 text 与官方原文不一致"
+                    f"（可能是截断/改写；若为伪造请更正）"
+                )
+    return errors, warns
+
+
 def check_run_log(
     items: list[tuple[int, dict]],
     dataset_items: list[tuple[int, dict]] | None = None,
@@ -326,6 +378,9 @@ def validate_files(
         e2, w2 = check_run_log(items, ds_items if ds_items else None)
         errors += [f"{p.name}  {m}" for m in e2]
         warnings += [f"{p.name}  {m}" for m in w2]
+        e3, w3 = check_chunk_ids(items)
+        errors += [f"{p.name}  {m}" for m in e3]
+        warnings += [f"{p.name}  {m}" for m in w3]
         run_items += items
         stats[f"run_log:{p.name}"] = len(items)
 
