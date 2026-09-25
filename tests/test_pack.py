@@ -139,6 +139,14 @@ for p in sample_logs:
         print(f"       {p.name}: {errs[:2]}")
 check(all_pass, f"{len(sample_logs)} 份现成答题卡样例全部通过校验")
 
+# ---- 10. 工具箱 README 必须够用，且明确声明不限语言 ----
+# 收件人唯一的入口文档。薄版本会让非 Python 团队以为自己不能参赛。
+kit_readme = (ROOT / "templates" / "kit_README.md").read_text(encoding="utf-8")
+for need in ["不限语言", "Node.js", "Java", "最小可行", "官方 chunk",
+             "Dify / Coze", "N/A，不计 0 分"]:
+    check(need in kit_readme, f"工具箱 README 含「{need}」")
+check(len(kit_readme.splitlines()) > 120, f"工具箱 README 足够详细（{len(kit_readme.splitlines())} 行）")
+
 print()
 print("ALL_PASS" if not fails else f"HAS_FAILURE: {fails}")
 raise SystemExit(1 if fails else 0)

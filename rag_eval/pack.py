@@ -90,69 +90,8 @@ def write_public(dataset: Path, out: Path) -> int:
     return 0
 
 
-README = """# RAG 质量评测工具箱
-
-用你自己的 RAG 答 50 道题，交回一份答题卡，我们统一评分并出对比报告。
-
-## 一、里面有什么
-
-```
-dataset/dataset_public.jsonl   考卷（50 题，只有题目，无答案）
-corpus/chunks.jsonl            语料库，114 个 chunk —— 你必须从这里检索
-corpus/chunk_index.json        chunk_id -> 文档/行号 对照表
-corpus/<domain>/*.md           原始语料（20 份，企业制度 + 电商零售）
-schemas/                       4 份数据契约（JSON Schema）
-templates/adapter_template.py  接入模板 —— 你唯一要改的文件
-templates/接入说明.md           详细接入说明
-rag_eval/                      校验工具（自查用）
-```
-
-## 二、3 步接入
-
-```bash
-pip install -r requirements.txt          # 只有 jsonschema 一个依赖
-
-# 1. 改 templates/adapter_template.py，实现里面的 ask(question)
-# 2. 跑题（先 --limit 5 调通）
-python templates/adapter_template.py --dataset dataset/dataset_public.jsonl --out run_log.jsonl --limit 5
-
-# 3. 自查，0 个错误才能交卷
-python -m rag_eval.cli validate --dataset dataset/dataset_public.jsonl --run-log run_log.jsonl
-```
-
-交回 `run_log.jsonl` 即可。
-
-## 三、一条硬规则：必须用官方 chunk
-
-请从 `corpus/chunks.jsonl` 这个固定 chunk 库检索，并如实返回官方 `chunk_id`
-（格式 `<doc_id>__<NNN>`，对照表在 `corpus/chunk_index.json`）。
-
-原因：标准答案是按这套编号标的。若自行重新切分，chunk_id 对不上，
-**Recall@K / MRR / NDCG / Precision@K 一个都算不出来**，等于白交。
-
-可以自由调整的：Embedding 模型、BM25/Hybrid、Reranker、Top-K、Query Rewrite、Prompt、LLM
-必须固定的：chunk 切法（每个 `## ` 小节 = 1 个 chunk）
-
-## 四、给多少字段，评多少指标
-
-| 你提供了 | 能评什么 |
-|---|---|
-| 只有 `answer` | Correctness / Relevance / Completeness / Abstention |
-| + `retrieved_chunks` | 再加 Recall@K / Precision@K / MRR / NDCG |
-| + `context` | 再加 Context Recall/Precision、Faithfulness |
-| + `citations` | 再加 Citation 系列 |
-| + `latency_ms` / `input_tokens` / `cost_usd` | 再加 P95 延迟、cost/query、Pareto 图 |
-
-缺字段显示 N/A，**不计 0 分**，但排行榜会标注你的覆盖率。
-
-## 五、语料说明
-
-全部为虚构演示语料（上海云启科技有限公司 / 云启商城），数字为编造值。
-语料内含多套年度版本（如差旅制度 2024/2025、退换货 2024/2025、会员 2024/2025、
-618 与双11 两套促销规则），请自行做好版本消歧。
-
-详见 `templates/接入说明.md`。
-"""
+# 工具箱 README 单独成文件（templates/kit_README.md），就地可读可版本化
+README = (ROOT / "templates" / "kit_README.md").read_text(encoding="utf-8")
 
 
 def build_kit(dataset: Path, out_zip: Path) -> int:
