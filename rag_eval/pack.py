@@ -42,6 +42,9 @@ KIT_FILES = [
     "corpus/chunk_index.json",
     "templates/adapter_template.py",
     "templates/接入说明.md",
+    "templates/run_log_sample.jsonl",
+    "templates/kit_README.md",
+    "corpus/baseline.py",
 ]
 KIT_GLOBS = ["corpus/enterprise/*.md", "corpus/ecommerce/*.md"]
 

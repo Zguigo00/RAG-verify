@@ -178,6 +178,34 @@ def ask(question: str) -> dict:
 
 想测你独特的切分策略，那是另一场独立实验，请单独说明，不计入本场比试。
 
+### 非官方 ID 系统如何对齐
+
+很多检索引擎（Chroma / Milvus / ES / 自研）用 md5 或自增 ID，不产出官方 `chunk_id`。不要改检索算法，
+把官方编号**塞进元数据再取出来**即可：
+
+```python
+# 入库时：把官方 chunk_id 写进 metadata
+collection.upsert(
+    ids=[c["chunk_id"] for c in chunks],          # 直接用官方编号当 Chroma ID，最省事
+    documents=[c["text"] for c in chunks],
+    metadatas=[{"chunk_id": c["chunk_id"], "doc_id": c["doc_id"]} for c in chunks],
+)
+
+# 检索后：从 metadata 取回官方编号，填进答题卡
+retrieved_chunks = [
+    {"chunk_id": m["chunk_id"],                   # ← 不是你的自产 ID
+     "doc_id":   m["doc_id"],
+     "rank":     i + 1,
+     "score":    r["score"],
+     "text":     r["text"]}
+    for i, (m, r) in enumerate(zip(metadatas, results))
+]
+```
+
+`search()` 只返回 `{"text","source","distance"}` 之类的系统同理 —— `source` 里存官方编号即可。
+填完跑 `python -m rag_eval.cli validate`，它会逐条核对编号是否在 `corpus/chunk_index.json` 里，
+填错指到行号。
+
 ---
 
 ## 五、给多少字段，评多少指标
@@ -216,6 +244,33 @@ def ask(question: str) -> dict:
    （Retrieval → Ranking → Context → Generation → Citation → No-answer 六类，附建议）
 3. **题型 / 行业雷达图**：8 种题型、多行业的强弱分布
 4. **逐题复核页面**：每题你的答案、检索到的 chunk（命中标准答案会高亮）、判分理由
+
+---
+
+## 七、防作弊边界（如实声明）
+
+文件提交模式下，**自报的中间过程无法被技术验证**。评测方承认以下边界：
+
+| 可验证 | 不可验证（依赖诚信） |
+|---|---|
+| 答题卡格式、题号完整性 | `retrieved_chunks` 是否真是系统检索所得 |
+| `chunk_id` 是否为官方编号 | `context` 是否真是送给 LLM 的文本 |
+| `chunk` 的 `text` 与官方原文是否一致 | `citations` 是否是实时生成 |
+| `input_tokens` 与 `context` 长度是否大致匹配 | `latency_ms` 是否真实 |
+| `rank` 与 `score` 的单调性 | 无答案题是否真走了拒答逻辑 |
+| `answer` 与 `retrieved_chunks` 的一致性（抽测） | — |
+
+评测方保留三类手段，请按诚信要求填写：
+
+1. **一致性审计**（`rag-eval audit`）：对可验证项做异常信号检测
+   —— score 非单调、context 与 token 数严重不符、latency 与耗时不符、text 与官方原文不符等。
+   命中即标为可疑，人工复核。
+2. **暗题抽测**：主办方保留一部分题目不公开，收官时补测，用于击穿「离线标注标准答案后硬编码」。
+3. **现场复跑**：随机抽题当面重跑，比对 answer 与 chunks 是否一致。
+
+**硬编码答题卡（离线标好标准 chunk_id 直接填）虽然可能骗过单次评测，但属于作弊**。
+这类行为一旦在复跑或暗题中暴露，成绩作废。内部/教学场景请按诚信填写 —— 评测的目的是诊断你 RAG 的短板，
+刷分只会让你拿不到那份「该改 Embedding 还是改 Prompt」的有用结论。
 
 ---
 

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -21,6 +22,10 @@ SYSTEM_NAME = "team-A"  # TODO(0): 改成你的系统名，字母/数字/下划�
 # ============================================================ TODO(1) 你的 RAG 接入点
 def ask(question: str) -> dict:
     """跑你的 RAG，返回一条答题卡记录的内容。
+
+    如果你的检索引擎自产 ID（md5 哈希、自增等），不要改检索算法 ——
+    入库时把官方 chunk_id 塞进元数据（或直接用它当向量库 ID），
+    映射成 retrieved_chunks 时再取出来即可。示例见 kit README「非官方 ID 系统如何对齐」。
 
     必须返回:
         answer: str          最终答案（超时/异常填 "" 并在 error 里写原因）
@@ -87,6 +92,12 @@ def to_record(question_id: str, raw: dict) -> dict:
 
 # ============================================================ 主流程（不用改）
 def main() -> int:
+    # Windows 控制台默认 GBK，UTF-8 中文会被打成乱码（看起来像全挂了）。
+    # 报错/日志走中文时务必有这两行；或运行前 set PYTHONIOENCODING=utf-8。
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
     ap = argparse.ArgumentParser(description="导出 RAG 评测答题卡 run_log.jsonl")
     ap.add_argument("--dataset", required=True, help="主办方发的 dataset.jsonl")
     ap.add_argument("--out", default="run_log.jsonl", help="输出文件（就是你要交的答题卡）")
