@@ -27,6 +27,10 @@ THRESHOLDS = {
     "tokens_for_latency": 1000,
     # 分阶段耗时之和不该超过端到端耗时
     "trace_ratio": 1.05,
+    # prompt 模板本身也占 token，但通常不计入 context 字段（context 填的是证据，
+    # 不含指令文本 —— 这样 Faithfulness 判分才对）。所以比较时要给模板留余量。
+    # QA 模板实测 200~800 字符，这里放 2000 字符余量。
+    "prompt_overhead_chars": 2000,
 }
 
 
@@ -68,9 +72,13 @@ def audit_record(rec: dict) -> list[dict]:
             add("high", "token_context_mismatch",
                 f"context {len(ctx)} 字符但 input_tokens 仅 {tin}（{ratio:.1f} 字/词元，"
                 f"远超任何 tokenizer）。context 疑似未真正送入 LLM")
-        if tin > len(ctx) * 2 and len(ctx) >= 50:
-            add("medium", "context_understated",
-                f"input_tokens {tin} 明显大于 context {len(ctx)} 字符，context 可能填得不完整")
+        # context 填得不完整：input_tokens 推出的文本量远超 context + 模板余量
+        # 降为 low：长 prompt 模板、函数调用说明、示例都会吃掉 token，属正常解释
+        overhead = THRESHOLDS["prompt_overhead_chars"]
+        if tin > (len(ctx) + overhead) * 3 and len(ctx) >= 100:
+            add("low", "context_understated",
+                f"input_tokens {tin} 远超 context {len(ctx)} 字符加 {overhead} 字符模板余量，"
+                f"context 可能填得不完整（若 prompt 模板较长属正常，可在 debug 注明模板长度）")
 
     # --- 耗时与 token 数不匹配 ---
     lat = rec.get("latency_ms")

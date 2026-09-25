@@ -59,6 +59,21 @@ check(sig({"answer": "a", "context": "短", "input_tokens": 5000, "latency_ms": 
           "latency_impossible"), "耗时不可能 -> latency_impossible")
 check(sig({"answer": "a", "latency_ms": 1000, "trace": {"a": 400, "b": 400, "c": 400}, "system_name": "t"},
           "trace_over_total"), "trace 之和超过总耗时 -> trace_over_total")
+
+# prompt 模板占 token 但不计入 context 字段（context 填的是证据，不含指令文本），
+# 不能把「短 context + 长模板」误判为 context 填得不完整
+fp = {"answer": "国内 100 元/天", "system_name": "t", "latency_ms": 1187,
+      "context": "## 伙食补助\n伙食补助按自然天数计发，国内 100 元/天。",   # ~25 字
+      "input_tokens": 420,                                     # 25 字 chunk + 长 prompt 模板
+      "retrieved_chunks": [{"chunk_id": "a", "rank": 1, "score": 0.74},
+                           {"chunk_id": "b", "rank": 2, "score": 0.69}],
+      "citations": [{"claim": "国内 100 元/天", "chunk_id": "a"}]}
+check(not audit_record(fp), "短 context + 长 prompt 模板不误报")
+
+# 但 context 真的填得极不完整时仍要报（允许 2000 字符模板余量后的剩余部分）
+tp = {**fp, "context": "## 伙食补助\n国内 100 元/天。" + "x" * 180, "input_tokens": 15000}
+check(sig(tp, "context_understated"), "context 明显填不完整仍报 context_understated")
+
 check(not audit_record({
     "answer": "国内 100 元/天", "system_name": "t", "input_tokens": 1500, "latency_ms": 1187,
     "context": "## 伙食补助\n国内 100 元/天。\n" * 60,
