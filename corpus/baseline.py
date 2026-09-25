@@ -35,6 +35,8 @@ def main() -> int:
     ap.add_argument("--dataset", required=True)
     ap.add_argument("--out", default="logs/baseline.jsonl")
     ap.add_argument("--top-k", type=int, default=5)
+    ap.add_argument("--limit", type=int, default=0,
+                    help="只跑前 N 题（冒烟测试用，0=全跑）")
     ap.add_argument("--noise", type=float, default=0.3,
                     help="注入无关 chunk 的比例，模拟 Top-K 塞垃圾（默认 0.3）")
     args = ap.parse_args()
@@ -44,6 +46,8 @@ def main() -> int:
         c["_toks"] = tokenize(c["text"] + " " + c["title"] + " " + c["doc_id"])
 
     rows = [json.loads(l) for l in Path(args.dataset).read_text(encoding="utf-8").splitlines() if l.strip()]
+    if args.limit:
+        rows = rows[: args.limit]
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 

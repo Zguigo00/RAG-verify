@@ -130,7 +130,43 @@ POST /ask
 
 ---
 
-## 三、3 步接入（Python 路线）
+## 三、第 0 步：零代码冒烟测试（建议先做）
+
+**不用写任何代码**，先确认工具箱在你机器上跑得通：
+
+```bash
+pip install -r requirements.txt
+
+# 用工具箱自带的朴素关键词检索，跑 3 题
+python corpus/baseline.py --dataset dataset/dataset_public.jsonl --out run_log.jsonl --limit 3
+
+# 自查
+python -m rag_eval.cli validate --dataset dataset/dataset_public.jsonl --run-log run_log.jsonl
+```
+
+期望输出：
+
+```
+[读取] dataset_records: 50 条
+[读取] dataset 版本: public
+[读取] run_log:run_log.jsonl: 3 条
+...
+[结果] 0 个错误, 0 个警告        ← 看到这个就说明环境没问题
+```
+
+跑通之后再开始改 `adapter_template.py`。这样如果后面报错，能确定是自己代码的问题而不是环境问题。
+
+> 这个 baseline 是纯词面匹配（无 embedding、无 rerank、无 LLM）的地板分，
+> 你的 RAG 理应比它强。也可以用它来对照自己的检索是否正常：
+> ```bash
+> python corpus/baseline.py --dataset dataset/dataset_public.jsonl --out baseline.jsonl
+> python -m rag_eval.cli run --dataset dataset/dataset_public.jsonl --run-log baseline.jsonl
+> ```
+> （注意：`run` 需要标准答案，所以只有主办方能出分。你本地能看的是 `validate` 的覆盖率。）
+
+---
+
+## 四、3 步接入（Python 路线）
 
 ```bash
 pip install -r requirements.txt          # 只有 jsonschema 一个依赖
@@ -164,7 +200,7 @@ def ask(question: str) -> dict:
 
 ---
 
-## 四、必读的 1 条硬规则：检索要用官方 chunk
+## 五、必读的 1 条硬规则：检索要用官方 chunk
 
 请从 `corpus/chunks.jsonl` 这个**固定 chunk 库**检索，并如实返回官方 `chunk_id`
 （格式 `<doc_id>__<NNN>`，对照表在 `corpus/chunk_index.json`）。
@@ -208,7 +244,7 @@ retrieved_chunks = [
 
 ---
 
-## 五、给多少字段，评多少指标
+## 六、给多少字段，评多少指标
 
 | 你提供了 | 能评什么 |
 |---|---|
@@ -225,7 +261,7 @@ retrieved_chunks = [
 
 ---
 
-## 六、5 个最容易踩的坑
+## 七、5 个最容易踩的坑
 
 1. **`rank` 必须从 1 开始连续不重复**（校验会拦，错误信息指到具体行号）
 2. **`context` 是「真正送给 LLM 的那段文字」**，不是原始文档，也不是只有摘要。
@@ -237,7 +273,7 @@ retrieved_chunks = [
 
 ---
 
-## 七、你会拿到什么
+## 八、你会拿到什么
 
 1. **Scorecard**：你的各项指标 + 全场对比（每列最优高亮）
 2. **错误归因报告**：答错的题定位到该改哪个组件
@@ -247,7 +283,7 @@ retrieved_chunks = [
 
 ---
 
-## 七、防作弊边界（如实声明）
+## 九、防作弊边界（如实声明）
 
 文件提交模式下，**自报的中间过程无法被技术验证**。评测方承认以下边界：
 
@@ -274,7 +310,7 @@ retrieved_chunks = [
 
 ---
 
-## 八、里面有什么
+## 十、里面有什么
 
 ```
 README.md                        本文件
