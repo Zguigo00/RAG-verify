@@ -261,3 +261,9 @@ PYTHONPATH=. python tests/test_report.py  # 报告结构 / 降级路径
   （「为什么这么设计」的部分从代码里读不出来，改代码前请先看第五节）
 - [`检测RAG质量.md`](检测RAG质量.md) —— 指标定义、题型设计、错误归因决策树的完整推导
 - [`RAG评测可视化工具-方案.md`](RAG评测可视化工具-方案.md) —— 架构与实施计划
+
+---
+
+## License
+
+[MIT](LICENSE) © 2026 Zguigo
