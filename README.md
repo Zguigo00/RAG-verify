@@ -29,6 +29,9 @@ python -m rag_eval.cli run      --dataset dataset/dataset_v1.jsonl --run-log log
 python -m rag_eval.cli run --dataset dataset/dataset_v1.jsonl \
     --run-log logs/team-A.jsonl --run-log logs/team-B.jsonl \
     --out results/all.json
+
+# 3. 出分报告（单文件 HTML，双击即开）
+python -m rag_eval.cli report --results results/all.json --out results/report.html
 ```
 
 ### 二、发卷给参赛方
@@ -83,10 +86,13 @@ python -m rag_eval.cli run --dataset dataset/dataset_v1.jsonl --run-log logs/bas
 |---|---|---|
 | `validate` | 校验答题卡：schema + 跨行一致性 + 指标层覆盖率 | 否 |
 | `run` | 确定性评测：检索/系统指标 + 错误归因 + 题型行业分组 + Pareto | 否 |
+| `report` | 出分报告：`results.json` 转单文件 HTML（雷达/热力/归因/Pareto/逐题） | 否 |
 | `judge` | LLM-as-a-Judge 打分（Faithfulness / Correctness / Context 等） | 是 |
 | `calibrate` | Judge 与人工标注算 Cohen's κ，κ<0.6 不放量 | 否 |
 | `make-public` | 发卷：剥离标准答案与泄题字段 | 否 |
 | `pack` | 打包参赛方工具箱 zip | 否 |
+| `audit` | 一致性审计：检测伪造中间过程的可疑信号 | 否 |
+| `reveal-categories` | 收官后公开题型标签，供参赛方复盘 | 否 |
 
 ```bash
 python -m rag_eval.cli <命令> --help
@@ -189,12 +195,13 @@ rag_eval/
   judge.py          OpenAI 兼容 Judge 客户端（温度 0、JSON 强制、3 次取中位）
   judge_metrics.py  指标组装与聚合
   calibration.py    Cohen's κ 校准与放量闸门
-  pack.py           发卷剥离 + 泄题自检 + 工具箱打包
+  pack.py           发卷剥离 + 泄题自检 + 暗题 + 打包 + 收官揭示
+  report.py         出分报告：results.json → 单文件 HTML（内联 SVG 图表）
   cli.py            命令行入口
 
 prompts/            6 份评分细则（一指标一文件，改 rubric 不动代码）
 templates/          adapter_template.py + 接入说明.md（发给参赛方）
-tests/              冒烟测试（P2 指标链 / P4 泄题回归）
+tests/              冒烟测试（P2 指标链 / P4 泄题回归 / report 结构）
 logs/               答题卡（示例 + baseline）
 results/            评测输出（仅保留 results_sample.json 作输出契约样例）
 ```
@@ -224,13 +231,15 @@ results/            评测输出（仅保留 results_sample.json 作输出契约
 
 ### 自定义权重出排名
 
-默认**不给总分**（不同业务权重不同，见《检测RAG质量.md》§56）。若赛制必须有名次，从 `results.json` 取各维度归一化值自行加权；Dashboard 会提供权重滑块。
+默认**不给总分**（不同业务权重不同，见《检测RAG质量.md》§56）。若赛制必须有名次，从 `results.json` 取各维度归一化值自行加权；`report` 命令提供各维度拆分图表，权重滑块在规划中的 Dashboard。
 
 ### 跑测试
 
 ```bash
-PYTHONPATH=. python tests/test_p2.py     # 指标链 / 校准闸门
-PYTHONPATH=. python tests/test_pack.py   # 泄题回归（含负向用例）
+PYTHONPATH=. python tests/test_p2.py      # 指标链 / 校准闸门
+PYTHONPATH=. python tests/test_pack.py    # 泄题回归（含负向用例）
+PYTHONPATH=. python tests/test_audit.py   # 反作弊区分度 / 暗题分层
+PYTHONPATH=. python tests/test_report.py  # 报告结构 / 降级路径
 ```
 
 ---
