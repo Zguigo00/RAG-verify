@@ -89,6 +89,35 @@
           }
         }
       },
+      "by_domain": {
+        "enterprise": {
+          "n": 3,
+          "correct_rate": 0.6666666666666666,
+          "retrieval": {
+            "hit@1": 1.0,
+            "hit@10": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0,
+            "mrr@1": 1.0,
+            "mrr@10": 1.0,
+            "mrr@3": 1.0,
+            "mrr@5": 1.0,
+            "ndcg@1": 1.0,
+            "ndcg@10": 1.0,
+            "ndcg@3": 1.0,
+            "ndcg@5": 1.0,
+            "precision@1": 1.0,
+            "precision@10": 0.1,
+            "precision@3": 0.3333333333333333,
+            "precision@5": 0.2,
+            "recall@1": 1.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0,
+            "retrieved_count": 2.5
+          }
+        }
+      },
       "system": {
         "n_questions": 3,
         "n_error": 0,
@@ -111,6 +140,7 @@
         {
           "question_id": "q001",
           "category": "simple",
+          "domain": "enterprise",
           "is_correct": true,
           "retrieval": {
             "hit@1": 1.0,
@@ -146,6 +176,7 @@
         {
           "question_id": "q003",
           "category": "no_answer",
+          "domain": "enterprise",
           "is_correct": true,
           "retrieval": null,
           "triage": {
@@ -159,6 +190,7 @@
         {
           "question_id": "q008",
           "category": "hard",
+          "domain": "enterprise",
           "is_correct": false,
           "retrieval": {
             "hit@1": 1.0,
@@ -261,6 +293,35 @@
           }
         }
       },
+      "by_domain": {
+        "enterprise": {
+          "n": 3,
+          "correct_rate": 0.3333333333333333,
+          "retrieval": {
+            "hit@1": 0.0,
+            "hit@10": 1.0,
+            "hit@3": 1.0,
+            "hit@5": 1.0,
+            "mrr@1": 0.0,
+            "mrr@10": 0.5,
+            "mrr@3": 0.5,
+            "mrr@5": 0.5,
+            "ndcg@1": 0.0,
+            "ndcg@10": 0.6309297535714575,
+            "ndcg@3": 0.6309297535714575,
+            "ndcg@5": 0.6309297535714575,
+            "precision@1": 0.0,
+            "precision@10": 0.1,
+            "precision@3": 0.3333333333333333,
+            "precision@5": 0.2,
+            "recall@1": 0.0,
+            "recall@10": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0,
+            "retrieved_count": 5.0
+          }
+        }
+      },
       "system": {
         "n_questions": 3,
         "n_error": 1,
@@ -284,6 +345,7 @@
         {
           "question_id": "q001",
           "category": "simple",
+          "domain": "enterprise",
           "is_correct": true,
           "retrieval": {
             "hit@1": 0.0,
@@ -319,6 +381,7 @@
         {
           "question_id": "q003",
           "category": "no_answer",
+          "domain": "enterprise",
           "is_correct": false,
           "retrieval": null,
           "triage": {
@@ -332,6 +395,7 @@
         {
           "question_id": "q002",
           "category": "multi_hop",
+          "domain": "enterprise",
           "is_correct": false,
           "retrieval": null,
           "triage": {
