@@ -24,11 +24,12 @@ jobs:
       - name: 安装依赖
         run: pip install -r requirements.txt
 
-      - name: 单元测试（63 条断言）
+      - name: 单元测试（63+ 条断言）
         run: |
           PYTHONPATH=. python tests/test_p2.py
           PYTHONPATH=. python tests/test_pack.py
           PYTHONPATH=. python tests/test_audit.py
+          PYTHONPATH=. python tests/test_report.py
 
       - name: 端到端冒烟（baseline → validate → run → audit）
         run: |
