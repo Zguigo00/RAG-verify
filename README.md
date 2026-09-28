@@ -86,7 +86,7 @@ python -m rag_eval.cli run --dataset dataset/dataset_v1.jsonl --run-log logs/bas
 |---|---|---|
 | `validate` | 校验答题卡：schema + 跨行一致性 + 指标层覆盖率 | 否 |
 | `run` | 确定性评测：检索/系统指标 + 错误归因 + 题型行业分组 + Pareto | 否 |
-| `report` | 出分报告：`results.json` 转单文件 HTML（雷达/热力/归因/Pareto/逐题） | 否 |
+| `report` | 出分报告：`results.json` 转单文件 HTML（雷达/热力/归因/Pareto/逐题），`--judge-scores` 加画 Judge 一致性 | 否 |
 | `judge` | LLM-as-a-Judge 打分（Faithfulness / Correctness / Context 等） | 是 |
 | `calibrate` | Judge 与人工标注算 Cohen's κ，κ<0.6 不放量 | 否 |
 | `make-public` | 发卷：剥离标准答案与泄题字段 | 否 |
