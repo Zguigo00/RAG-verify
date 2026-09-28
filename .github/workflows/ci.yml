@@ -38,10 +38,10 @@ jobs:
           python -m rag_eval.cli run --dataset dataset/dataset_v1.jsonl --run-log results/ci_baseline.jsonl --out results/ci_results.json
           python -m rag_eval.cli audit --run-log results/ci_baseline.jsonl
 
-  # κ 校准闸门：calibration/ 下有真实校准件才激活（见 calibration/README.md）。
+  # κ 校准闸门：calibration/ 下有真实校准件才跑（见 calibration/README.md）。
   # κ < 0.6 时 calibrate 退出码 1，直接把构建判失败 —— rubric 改坏了就拦住。
+  # 注意：hashFiles 不能用在 job 级 if（job 级在 checkout 前求值），故用 step 内守卫。
   calibrate:
-    if: ${{ hashFiles('calibration/judge_scores.json', 'calibration/human_labels.jsonl') != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -57,6 +57,10 @@ jobs:
 
       - name: Cohen's κ 校准闸门
         run: |
+          if [ ! -f calibration/judge_scores.json ] || [ ! -f calibration/human_labels.jsonl ]; then
+            echo "calibration/ 下无真实校准件，跳过闸门（见 calibration/README.md）"
+            exit 0
+          fi
           python -m rag_eval.cli calibrate \
             --judge-scores calibration/judge_scores.json \
             --human-labels calibration/human_labels.jsonl \
