@@ -264,6 +264,22 @@ def cmd_pack(args: argparse.Namespace) -> int:
     return build_kit(Path(args.dataset), Path(args.out), hold_out=args.hold_out)
 
 
+def cmd_report(args: argparse.Namespace) -> int:
+    """出分报告：results.json -> 单文件 HTML（雷达/热力/归因/Pareto/逐题）。"""
+    from .report import write_report
+
+    return write_report(Path(args.results), Path(args.out), title=args.title)
+
+
+def cmd_reveal_categories(args: argparse.Namespace) -> int:
+    """收官后公开题型标签，供参赛方按题型复盘。"""
+    from .pack import reveal_categories
+
+    return reveal_categories(
+        Path(args.dataset), Path(args.out), include_notes=args.notes
+    )
+
+
 def cmd_audit(args: argparse.Namespace) -> int:
     """一致性审计：不看答案对错，只看答题卡的数据自不自洽（反作弊抓手）。"""
     import json
@@ -355,6 +371,21 @@ def main(argv: list[str] | None = None) -> int:
     pk.add_argument("--hold-out", type=int, default=0,
                     help="扣留 N 题作暗题，不进工具箱，另存为 dist/dataset_holdout.jsonl")
     pk.set_defaults(func=cmd_pack)
+
+    rc = sub.add_parser(
+        "reveal-categories",
+        help="收官后公开题型标签（category/difficulty/expected_abstain），供参赛方复盘",
+    )
+    rc.add_argument("--dataset", required=True)
+    rc.add_argument("--out", default="dataset/dataset_revealed.jsonl")
+    rc.add_argument("--notes", action="store_true", help="连出题备注一起公开")
+    rc.set_defaults(func=cmd_reveal_categories)
+
+    rp = sub.add_parser("report", help="出分报告：results.json 转单文件 HTML（双击即开）")
+    rp.add_argument("--results", default="results/results.json")
+    rp.add_argument("--out", default="results/report.html")
+    rp.add_argument("--title", default="RAG 评测对比报告")
+    rp.set_defaults(func=cmd_report)
 
     ad = sub.add_parser("audit", help="一致性审计：检测硬编码/伪造中间过程的可疑信号")
     ad.add_argument("--run-log", action="append", required=True)

@@ -5,8 +5,14 @@
 也有故意喂进泄题数据的负向用例，确认拦截真的会响。
 """
 import json
+import sys
 import zipfile
 from pathlib import Path
+
+# Windows 控制台默认 GBK，强制 UTF-8 输出，避免中文乱码
+for _s in (sys.stdout, sys.stderr):
+    if hasattr(_s, "reconfigure"):
+        _s.reconfigure(encoding="utf-8", errors="replace")
 
 from rag_eval.pack import (
     FORBIDDEN_SUBSTRINGS,
@@ -146,6 +152,23 @@ for need in ["不限语言", "Node.js", "Java", "最小可行", "官方 chunk",
              "Dify / Coze", "N/A，不计 0 分"]:
     check(need in kit_readme, f"工具箱 README 含「{need}」")
 check(len(kit_readme.splitlines()) > 120, f"工具箱 README 足够详细（{len(kit_readme.splitlines())} 行）")
+
+# ---- 11. reveal-categories：收官后公开题型标签，但 ground_truth 仍不得出现 ----
+from rag_eval.pack import reveal_categories
+import tempfile
+
+tmpdir = Path(tempfile.mkdtemp())
+reveal_out = tmpdir / "revealed.jsonl"
+reveal_categories(ROOT / "dataset" / "dataset_sample.jsonl", reveal_out)
+revealed = [json.loads(l) for l in reveal_out.read_text(encoding="utf-8").splitlines() if l.strip()]
+check(len(revealed) > 0, f"揭示产物非空（{len(revealed)} 条）")
+check(
+    all("category" in r for r in revealed),
+    "揭示产物含 category",
+)
+reveal_text = reveal_out.read_text(encoding="utf-8")
+check("ground_truth" not in reveal_text, "揭示产物不含 ground_truth_*")
+check("expected_abstain" in reveal_text, "揭示产物含 expected_abstain（赛后可公开）")
 
 print()
 print("ALL_PASS" if not fails else f"HAS_FAILURE: {fails}")

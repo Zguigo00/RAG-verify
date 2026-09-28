@@ -187,6 +187,37 @@ def write_public(
 README = (ROOT / "templates" / "kit_README.md").read_text(encoding="utf-8")
 
 
+def reveal_categories(
+    dataset: Path, out: Path, include_notes: bool = False
+) -> int:
+    """收官后公开题型标签，供参赛方按题型复盘。
+
+    发卷时 category / difficulty / expected_abstain 是泄题字段（见本模块顶部），
+    赛后不再有博弈价值 —— 知道「q003 是 no_answer」救不了已交的卷子。
+
+    只公开标签，不公开 ground_truth_*：复盘要的是「按题型看我差在哪」，
+    不是把标准答案发出去（暗题还要留作下届考卷）。
+    """
+    rows = [json.loads(l) for l in dataset.read_text(encoding="utf-8").splitlines() if l.strip()]
+    fields = ["question_id", "question", "domain", "category", "difficulty", "expected_abstain"]
+    if include_notes:
+        fields.append("notes")
+
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(
+        "\n".join(json.dumps({k: r[k] for k in fields if k in r}, ensure_ascii=False) for r in rows)
+        + "\n",
+        encoding="utf-8",
+    )
+    by_cat: dict[str, int] = {}
+    for r in rows:
+        by_cat[r.get("category") or "?"] = by_cat.get(r.get("category") or "?", 0) + 1
+    print(f"[揭示] {len(rows)} 题的题型标签 -> {out}")
+    print(f"[揭示] 字段: {', '.join(fields)}（ground_truth_* 仍保留不发）")
+    print(f"[揭示] 题型分布: {by_cat}")
+    return 0
+
+
 def build_kit(dataset: Path, out_zip: Path, hold_out: int = 0) -> int:
     rows = [json.loads(l) for l in dataset.read_text(encoding="utf-8").splitlines() if l.strip()]
     held, published_rows = pick_holdout(rows, hold_out)
