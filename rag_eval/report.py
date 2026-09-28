@@ -151,15 +151,20 @@ JS = """
 """
 
 
-def ink_on(hex_color: str) -> str:
-    """填充块内标签选白/墨：按 WCAG 对比度取更高的一侧。"""
+def ink_on(hex_color: str, mode: str = "light") -> str:
+    """填充块内标签选白/墨：按 WCAG 对比度取更高的一侧。
+
+    必须返回字面色而不是 --text-primary 之类的 CSS 变量 —— 段色在深浅模式间
+    换 hex，文本色变量也会翻转，两边一动对比度就对不上了。两种模式各算一次。
+    """
     h = hex_color.lstrip("#")
     r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
     lin = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in (r, g, b)]
     lum = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
-    contrast_dark = (lum + 0.05) / 0.05  # vs #0b0b0b 近似
+    # 白字 vs 深墨字，谁对比度高用谁
+    contrast_dark = (lum + 0.05) / 0.05  # vs #000 近似（墨字）
     contrast_white = 1.05 / (lum + 0.05)
-    return "#ffffff" if contrast_white >= contrast_dark else "var(--text-primary)"
+    return "#ffffff" if contrast_white >= contrast_dark else "#0b0b0b"
 
 
 def esc(s: object) -> str:
@@ -287,7 +292,7 @@ def svg_heatmap(rows: list[str], cols: list[str], values: dict[tuple[str, str], 
                 continue
             step = min(6, int(v * 7)) if v < 1 else 6
             fill = f"var(--heat-{step})"
-            ink = "#ffffff" if step >= 3 else "var(--text-primary)"
+            ink = f"var(--ink-h{step})"
             parts.append(
                 f'<rect class="hit" x="{x}" y="{y}" width="{bw}" height="{bh}" rx="4" fill="{fill}" '
                 f'data-tip="{esc(rname)} · {esc(cname)}: {v * 100:.0f}%"/>'
@@ -335,10 +340,10 @@ def svg_stacked(names: list[str], colors_order: list[tuple[str, str]],
                 f'<rect class="hit" x="{x:.1f}" y="{y:.1f}" width="{seg_w:.1f}" height="{bar_h}" rx="{rx}" '
                 f'fill="var(--s{k + 1})" data-tip="{esc(tip)}"/>'
             )
-            if seg_w >= 28:  # 放得下才放内标签；墨色按段色对比度选
+            if seg_w >= 28:  # 放得下才放内标签；墨色随深浅模式（--ink-sN）
                 parts.append(
                     f'<text x="{x + seg_w / 2:.1f}" y="{y + bar_h / 2 + 4:.0f}" font-size="11" '
-                    f'fill="{ink_on(SERIES_LIGHT[k])}" text-anchor="middle">{cnt}</text>'
+                    f'fill="var(--ink-s{k + 1})" text-anchor="middle">{cnt}</text>'
                 )
             x += bw
         parts.append(
@@ -450,15 +455,27 @@ def svg_pareto(names: list[str], systems: dict, colors: dict[str, str]) -> str:
 
 HEAT_VARS = """
 .viz-root { --heat-0: #cde2fb; --heat-1: #9ec5f4; --heat-2: #6da7ec; --heat-3: #3987e5;
-            --heat-4: #256abf; --heat-5: #184f95; --heat-6: #0d366b; }
+            --heat-4: #256abf; --heat-5: #184f95; --heat-6: #0d366b;
+            --ink-s1: #0b0b0b; --ink-s2: #0b0b0b; --ink-s3: #0b0b0b; --ink-s4: #0b0b0b;
+            --ink-s5: #0b0b0b; --ink-s6: #ffffff; --ink-s7: #ffffff; --ink-s8: #0b0b0b;
+            --ink-h0: #0b0b0b; --ink-h1: #0b0b0b; --ink-h2: #0b0b0b; --ink-h3: #0b0b0b;
+            --ink-h4: #ffffff; --ink-h5: #ffffff; --ink-h6: #ffffff; }
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) .viz-root {
     --heat-0: #104281; --heat-1: #184f95; --heat-2: #256abf; --heat-3: #2a78d6;
-    --heat-4: #5598e7; --heat-5: #86b6ef; --heat-6: #cde2fb; }
+    --heat-4: #5598e7; --heat-5: #86b6ef; --heat-6: #cde2fb;
+    --ink-s1: #0b0b0b; --ink-s2: #0b0b0b; --ink-s3: #0b0b0b; --ink-s4: #0b0b0b;
+    --ink-s5: #0b0b0b; --ink-s6: #ffffff; --ink-s7: #0b0b0b; --ink-s8: #0b0b0b;
+    --ink-h0: #ffffff; --ink-h1: #ffffff; --ink-h2: #ffffff; --ink-h3: #0b0b0b;
+    --ink-h4: #0b0b0b; --ink-h5: #0b0b0b; --ink-h6: #0b0b0b; }
 }
 :root[data-theme="dark"] .viz-root {
   --heat-0: #104281; --heat-1: #184f95; --heat-2: #256abf; --heat-3: #2a78d6;
-  --heat-4: #5598e7; --heat-5: #86b6ef; --heat-6: #cde2fb; }
+  --heat-4: #5598e7; --heat-5: #86b6ef; --heat-6: #cde2fb;
+  --ink-s1: #0b0b0b; --ink-s2: #0b0b0b; --ink-s3: #0b0b0b; --ink-s4: #0b0b0b;
+  --ink-s5: #0b0b0b; --ink-s6: #ffffff; --ink-s7: #0b0b0b; --ink-s8: #0b0b0b;
+  --ink-h0: #ffffff; --ink-h1: #ffffff; --ink-h2: #ffffff; --ink-h3: #0b0b0b;
+  --ink-h4: #0b0b0b; --ink-h5: #0b0b0b; --ink-h6: #0b0b0b; }
 """
 
 
@@ -479,7 +496,7 @@ def table_html(headers: list[str], rows: list[list[str]], hero: str | None = Non
     return f"<table><thead><tr>{th}</tr></thead><tbody>{''.join(body)}</tbody></table>"
 
 
-def render(results: dict, title: str = "RAG 评测对比报告") -> str:
+def render(results: dict, title: str = "RAG 评测对比报告", judge_doc: dict | None = None) -> str:
     systems = results.get("systems") or {}
     names = sorted(systems)
     colors = pick_system_colors(names)
@@ -621,6 +638,54 @@ def render(results: dict, title: str = "RAG 评测对比报告") -> str:
             + "</section>"
         )
 
+    # ---------- 8. Judge 一致性（有 judge_scores.json 才画）----------
+    if judge_doc and judge_doc.get("per_question"):
+        jp = judge_doc["per_question"]
+        unstable = []
+        for row in jp:
+            for metric, res in (row.get("scores") or {}).items():
+                if res and res.get("spread", 0) >= 2:
+                    unstable.append((row.get("question_id"), row.get("system_name"),
+                                     metric, res.get("scores"), res.get("spread")))
+        rows = []
+        for name in names:
+            summary = (judge_doc.get("summary") or {}).get(name) or {}
+            if not summary:
+                continue
+            row = [f'<span class="swatch" style="background:{esc(colors[name])}"></span>{esc(name)}']
+            for metric in ("faithfulness", "correctness", "relevance", "completeness",
+                           "context_recall", "context_precision"):
+                m = summary.get(metric) or {}
+                if m.get("mean_score") is None:
+                    row.append('<span class="na">N/A</span>')
+                else:
+                    n_un = m.get("n_unstable", 0)
+                    flag = f' <span class="bad">({n_un} 不稳)</span>' if n_un else ""
+                    row.append(f"{m['mean_score']:.2f}{flag}")
+            rows.append(row)
+        sec = ["<section><h2>Judge 一致性</h2>"]
+        jm = judge_doc.get("judge") or {}
+        sec.append(
+            f"<p class='note'>模型: {esc(jm.get('model', '?'))} · 每题 {esc(jm.get('samples', '?'))} 次取中位 · "
+            "均分 1-5 · spread≥2 标「不稳」建议人工复核（调用 " + str(judge_doc.get("api_calls", "?")) + " 次）</p>"
+        )
+        if rows:
+            sec.append(table_html(
+                ["系统", "Faithfulness", "Correctness", "Relevance", "Completeness",
+                 "Ctx Recall", "Ctx Precision"],
+                rows,
+            ))
+        if unstable:
+            sec.append("<p class='note' style='margin-top:12px'>不稳判定（spread≥2）：</p>")
+            sec.append(table_html(
+                ["题号", "系统", "指标", "原始分", "spread"],
+                [[esc(q), esc(s), esc(m), esc(sc), str(sp)] for q, s, m, sc, sp in unstable],
+            ))
+        else:
+            sec.append("<p class='note'>无不稳判定（所有 spread &lt; 2）。</p>")
+        sec.append("</section>")
+        sections.append("".join(sec))
+
     # ---------- 表格视图检查：雷达 ----------
     if len(names) > 0:
         rrows = []
@@ -670,12 +735,19 @@ def render(results: dict, title: str = "RAG 评测对比报告") -> str:
 """
 
 
-def write_report(results_path: Path, out: Path, title: str = "RAG 评测对比报告") -> int:
+def write_report(
+    results_path: Path, out: Path, title: str = "RAG 评测对比报告",
+    judge_scores_path: Path | None = None,
+) -> int:
     import json
 
     results = json.loads(results_path.read_text(encoding="utf-8"))
+    judge_doc = None
+    if judge_scores_path and judge_scores_path.exists():
+        judge_doc = json.loads(judge_scores_path.read_text(encoding="utf-8"))
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(render(results, title), encoding="utf-8")
+    out.write_text(render(results, title, judge_doc=judge_doc), encoding="utf-8")
     n = len(results.get("systems") or {})
-    print(f"[报告] {n} 个系统 -> {out}  ({out.stat().st_size // 1024} KB)")
+    extra = " + Judge 一致性" if judge_doc else ""
+    print(f"[报告] {n} 个系统{extra} -> {out}  ({out.stat().st_size // 1024} KB)")
     return 0
