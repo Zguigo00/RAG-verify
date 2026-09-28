@@ -19,6 +19,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import threading
 import time
 import urllib.error
 import urllib.request
@@ -90,6 +91,7 @@ class JudgeClient:
         self.retries = retries
         self.samples = samples
         self.calls = 0  # 记账：估算成本用
+        self._lock = threading.Lock()  # 并发判分时保护 calls 记账
 
     # ------------------------------------------------------------ 单次调用
 
@@ -113,7 +115,8 @@ class JudgeClient:
         last: Exception | None = None
         for attempt in range(1, self.retries + 1):
             try:
-                self.calls += 1
+                with self._lock:
+                    self.calls += 1
                 with urllib.request.urlopen(req, timeout=self.timeout) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
                 return data["choices"][0]["message"]["content"]

@@ -81,6 +81,51 @@ def judge_record(
     return out
 
 
+def judge_records_parallel(
+    client: JudgeClient,
+    items: list[tuple[dict, dict]],
+    samples: int | None = None,
+    workers: int = 8,
+    on_done=None,
+) -> list[dict]:
+    """并发跑多条记录的判分，结果按输入顺序返回。
+
+    串行下全量 50 题约 750 次调用 × 5s ≈ 1 小时；8 路并发压到 ~8 分钟。
+    - 逐题并发、题内串行：一题的 6 个指标共享同一份上下文拼接，串行更稳，
+      而题间毫无依赖，是天然的并行粒度
+    - 单条失败不拖垮整批（judge_record 内部已兜住单指标异常）
+    - on_done(idx, result) 每完成一条回调一次，供 CLI 打进度（回调在工作线程里，
+      由调用方自己保证线程安全）
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    if not items:
+        return []
+    results: list[dict | None] = [None] * len(items)
+    n_workers = max(1, min(workers, len(items)))
+
+    def _one(i: int) -> tuple[int, dict]:
+        rec, gt = items[i]
+        return i, judge_record(client, rec, gt, samples=samples)
+
+    if n_workers == 1:  # 顺序执行，便于调试与单线程环境
+        for i in range(len(items)):
+            idx, res = _one(i)
+            results[idx] = res
+            if on_done:
+                on_done(idx, res)
+        return [r or {} for r in results]
+
+    with ThreadPoolExecutor(max_workers=n_workers) as ex:
+        futures = [ex.submit(_one, i) for i in range(len(items))]
+        for fut in as_completed(futures):
+            idx, res = fut.result()
+            results[idx] = res
+            if on_done:
+                on_done(idx, res)
+    return [r or {} for r in results]
+
+
 def summarize(records_scores: list[dict]) -> dict[str, dict]:
     """跨记录聚合各指标：均分（1-5 与归一化 0-1）、有效条数、不稳条数。"""
     out: dict[str, dict] = {}

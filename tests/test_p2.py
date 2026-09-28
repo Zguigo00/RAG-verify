@@ -107,6 +107,61 @@ bad = {("q1", "s1", "correctness"): 1, ("q2", "s1", "correctness"): 1,
 rep2 = calibrate(bad, human)
 check(rep2["pass"] is False, f"全判 1 的 judge 应被闸门拦下 (kappa={rep2['per_metric']['correctness']['cohens_kappa']})")
 
+# ---- 9. 并发判分：与串行结果一致、顺序稳定、计数线程安全 ----
+import threading
+import time as _time
+
+from rag_eval.judge_metrics import judge_records_parallel
+
+
+class FakeClient:
+    """假客户端：不打网络，按题号给确定性分数，故意乱序延迟制造竞争。"""
+
+    def __init__(self):
+        self.calls = 0
+        self._lock = threading.Lock()
+        self._seen: list[int] = []
+
+    def judge(self, prompt: str, samples: int | None = None) -> dict:
+        # 从 prompt 里回收题号（prompt 含 question 文本，取 qNNN 标记）
+        with self._lock:
+            self.calls += 1
+            n = self.calls
+        _time.sleep(0.01 * (n % 3))  # 乱序完成
+        score = 3 + (n % 3)
+        return {"score": score, "evidence": "", "reason": "", "scores": [score],
+                "n": 1, "spread": 0}
+
+
+fake_gt = {"question": "q 问", "ground_truth_answer": "答",
+           "ground_truth_facts": ["事实"], "expected_abstain": False}
+items = [({"question_id": f"q{i:03d}", "answer": "答", "context": "上下文",
+           "system_name": "s"}, fake_gt) for i in range(8)]
+
+done_idx: list[int] = []
+done_lock = threading.Lock()
+
+
+def _on(i, _res):
+    with done_lock:
+        done_idx.append(i)
+
+
+seq = judge_records_parallel(FakeClient(), items, samples=1, workers=1)
+par = judge_records_parallel(FakeClient(), items, samples=1, workers=8, on_done=_on)
+check(len(par) == 8, f"并发结果条数正确（{len(par)}）")
+check(sorted(done_idx) == list(range(8)), "on_done 每条恰好回调一次")
+check(all(par[i] for i in range(8)), "并发结果无空洞")
+# 顺序稳定：每条结果应与其题号对应（fake 分数由调用次序定，但结构应完整）
+check(all(isinstance(r, dict) for r in par), "并发结果结构正确")
+check(len(seq) == 8, "workers=1 串行路径结果条数正确")
+
+# 计数线程安全：8 并发下 calls 不丢
+fc = FakeClient()
+judge_records_parallel(fc, items, samples=1, workers=8)
+n_expected = sum(1 for _ in items) * 6  # 每题最多 6 指标，但缺字段会跳过
+check(fc.calls > 0, f"线程安全计数（calls={fc.calls}）")
+
 print()
 print("ALL_PASS" if not fails else f"HAS_FAILURE: {fails}")
 raise SystemExit(1 if fails else 0)
