@@ -268,7 +268,12 @@ def cmd_report(args: argparse.Namespace) -> int:
     """出分报告：results.json -> 单文件 HTML（雷达/热力/归因/Pareto/逐题）。"""
     from .report import write_report
 
-    return write_report(Path(args.results), Path(args.out), title=args.title)
+    return write_report(
+        Path(args.results),
+        Path(args.out),
+        title=args.title,
+        judge_scores_path=Path(args.judge_scores) if args.judge_scores else None,
+    )
 
 
 def cmd_reveal_categories(args: argparse.Namespace) -> int:
@@ -385,6 +390,7 @@ def main(argv: list[str] | None = None) -> int:
     rp.add_argument("--results", default="results/results.json")
     rp.add_argument("--out", default="results/report.html")
     rp.add_argument("--title", default="RAG 评测对比报告")
+    rp.add_argument("--judge-scores", help="可选：judge_scores.json，加画 Judge 一致性一节")
     rp.set_defaults(func=cmd_report)
 
     ad = sub.add_parser("audit", help="一致性审计：检测硬编码/伪造中间过程的可疑信号")

@@ -77,6 +77,27 @@ solo = {"systems": {"only": mk("only", 0.5, 100)}, "judge": "x", "pareto_front":
 hs = render(solo)
 check("指标雷达" in hs, "单系统仍出图")
 
+# ---- 7. Judge 一致性：有 judge_doc 才画，spread>=2 列为不稳 ----
+judge_doc = {
+    "judge": {"model": "test-model", "samples": 3},
+    "api_calls": 42,
+    "per_question": [
+        {"question_id": "q1", "system_name": "a",
+         "scores": {"correctness": {"score": 4, "scores": [4, 2, 5], "spread": 3}}},
+        {"question_id": "q2", "system_name": "a",
+         "scores": {"correctness": {"score": 5, "scores": [5, 5, 4], "spread": 1}}},
+    ],
+    "summary": {"a": {"correctness": {"mean_score": 4.5, "mean_unit": 0.875,
+                                        "n_scored": 2, "n_error": 0, "n_unstable": 1}}},
+}
+hj = render(d, judge_doc=judge_doc)
+check("Judge 一致性" in hj, "含 Judge 一致性一节")
+check("不稳" in hj and "spread" in hj, "不稳判定列出 spread")
+check("test-model" in hj, "标注 Judge 模型来源")
+check("q1" in hj, "不稳题目进清单")
+h_noj = render(d)
+check("Judge 一致性" not in h_noj, "无 judge_doc 时自动隐藏该节")
+
 print()
 print("ALL_PASS" if not fails else f"HAS_FAILURE: {fails}")
 raise SystemExit(1 if fails else 0)
