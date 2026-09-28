@@ -2,7 +2,13 @@
 """P2 冒烟测试：prompt 模板、适用性判定、校准闸门、judge 输出接入。不调真实 API。"""
 import json
 import re
+import sys
 from pathlib import Path
+
+# Windows 控制台默认 GBK，强制 UTF-8 输出，避免中文乱码
+for _s in (sys.stdout, sys.stderr):
+    if hasattr(_s, "reconfigure"):
+        _s.reconfigure(encoding="utf-8", errors="replace")
 
 from rag_eval.judge import to_binary, to_unit
 from rag_eval.judge_metrics import METRICS, applicable, build_inputs, load_prompt, summarize

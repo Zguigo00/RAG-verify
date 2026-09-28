@@ -6,8 +6,14 @@
 - hold-out 必须每种题型都有暗题（否则按题型硬编码照样过）
 """
 import json
+import sys
 from collections import Counter
 from pathlib import Path
+
+# Windows 控制台默认 GBK，强制 UTF-8 输出，避免中文乱码
+for _s in (sys.stdout, sys.stderr):
+    if hasattr(_s, "reconfigure"):
+        _s.reconfigure(encoding="utf-8", errors="replace")
 
 from rag_eval.audit import audit_record, audit_records
 from rag_eval.pack import pick_holdout
