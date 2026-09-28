@@ -1,5 +1,7 @@
 # RAG-verify
 
+[![tests](https://github.com/Zguigo00/RAG-verify/actions/workflows/ci.yml/badge.svg)](https://github.com/Zguigo00/RAG-verify/actions/workflows/ci.yml)
+
 **RAG 质量评测与对比工具** —— 在同一套考卷上比出多个 RAG 系统谁更好，并且能解释**差在哪一环**。
 
 不是给一个总分，而是输出：检索层 / 上下文层 / 生成层 / 引用层 / 系统层分层指标 + 六类错误归因 + Pareto 权衡图。
