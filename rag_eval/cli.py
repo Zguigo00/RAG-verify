@@ -149,7 +149,7 @@ def cmd_judge(args: argparse.Namespace) -> int:
     import json
 
     from .judge import JudgeClient, to_binary, to_unit
-    from .judge_metrics import judge_record, summarize
+    from .judge_metrics import judge_records_parallel, summarize
 
     gt_by_id = _load_gt(args.dataset)
     records = _load_runs(args.run_log)
@@ -159,11 +159,26 @@ def cmd_judge(args: argparse.Namespace) -> int:
     print(f"Judge: {client.model} @ {client.base_url}   样本数/题: {client.samples}")
 
     rows = []
-    for i, rec in enumerate(records, 1):
+    # 逐题并发（默认 8 路）；完成顺序不定，结果按输入顺序落盘
+    work: list[tuple[dict, dict]] = []
+    for rec in records:
         gt = gt_by_id.get(rec.get("question_id"))
         if gt is None:
             continue
-        scores = judge_record(client, rec, gt, samples=args.samples)
+        work.append((rec, gt))
+    n_done = 0
+
+    def _on_done(_idx: int, scores: dict) -> None:
+        nonlocal n_done
+        n_done += 1
+        done = {m: s["score"] for m, s in scores.items() if s and s.get("score") is not None}
+        rec = work[_idx][0]
+        print(f"[{n_done}/{len(work)}] {rec.get('question_id')}/{rec.get('system_name')}  {done}")
+
+    all_scores = judge_records_parallel(
+        client, work, samples=args.samples, workers=args.workers, on_done=_on_done
+    )
+    for (rec, _gt), scores in zip(work, all_scores):
         rows.append(
             {
                 "question_id": rec.get("question_id"),
@@ -179,8 +194,6 @@ def cmd_judge(args: argparse.Namespace) -> int:
                 },
             }
         )
-        done = {m: s["score"] for m, s in scores.items() if s and s.get("score") is not None}
-        print(f"[{i}/{len(records)}] {rec.get('question_id')}/{rec.get('system_name')}  {done}")
 
     out = {
         "judge": {"model": client.model, "base_url": client.base_url, "samples": client.samples},
@@ -353,6 +366,8 @@ def main(argv: list[str] | None = None) -> int:
     j.add_argument("--api-key", help="默认读 RAG_JUDGE_API_KEY")
     j.add_argument("--model", help="默认读 RAG_JUDGE_MODEL")
     j.add_argument("--samples", type=int, default=3, help="每条判几次取中位（默认 3）")
+    j.add_argument("--workers", type=int, default=8,
+                   help="逐题并发数（默认 8；限速严格的端点调小，如 4）")
     j.add_argument("--out", default="results/judge_scores.json")
     j.set_defaults(func=cmd_judge)
 

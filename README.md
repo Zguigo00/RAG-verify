@@ -194,7 +194,7 @@ rag_eval/
   system.py         延迟分位数、Token、成本、错误率
   triage.py         六类错误归因决策树
   aggregate.py      聚合、题型/行业分组、Pareto 前沿
-  judge.py          OpenAI 兼容 Judge 客户端（温度 0、JSON 强制、3 次取中位）
+  judge.py          OpenAI 兼容 Judge 客户端（温度 0、JSON 强制、3 次取中位、逐题并发）
   judge_metrics.py  指标组装与聚合
   calibration.py    Cohen's κ 校准与放量闸门
   pack.py           发卷剥离 + 泄题自检 + 暗题 + 打包 + 收官揭示
