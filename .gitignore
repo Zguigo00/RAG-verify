@@ -24,6 +24,10 @@ dist/
 dataset_holdout.jsonl
 *holdout*
 
+# 校准件留在本地：κ 未达标前不入库激活 CI 闸门，且含 Judge 端点信息
+calibration/human_labels.jsonl
+calibration/judge_scores.json
+
 # 设计文档移出仓库（本地保留）
 检测RAG质量.md
 RAG评测可视化工具-方案.md
