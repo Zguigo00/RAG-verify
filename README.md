@@ -19,6 +19,7 @@
 
 ### 一、主办方：跑一场对比评测
 
+
 ```bash
 pip install -r requirements.txt          # 只有 jsonschema；跑 LLM Judge 时用标准库直连，无额外依赖
 
